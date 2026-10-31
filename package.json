@@ -1,6 +1,6 @@
 {
   "name": "dsh-legal-intake",
-  "version": "0.1.0-alpha.3",
+  "version": "0.1.0-alpha.4",
   "description": "Legal request intake from EML, thread dedupe and ledger export.",
   "type": "module",
   "main": "./lib/plugin/index.js",
