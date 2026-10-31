@@ -1,4 +1,4 @@
-# @perrylink/dsh-legal-intake
+# dsh-legal-intake
 
 Legal request intake from EML, Message-ID/thread dedupe and ledger export for DeepSeek Harness.
 
@@ -7,7 +7,7 @@ Legal request intake from EML, Message-ID/thread dedupe and ledger export for De
 ## Install
 
 ```sh
-dsh plugin --profile <profile> add @perrylink/dsh-legal-intake
+dsh plugin --profile <profile> add dsh-legal-intake
 dsh --profile <profile> --dump-config | grep dsh-legal-intake
 ```
 
@@ -16,7 +16,7 @@ Requires DSH `>=0.2.1-rc.3 <0.3.0` and Node `>=24.9 <25`.
 <details>
 <summary>中文摘要</summary>
 
-法务需求 EML 收件、线程去重与台账导出。 安装：`dsh plugin --profile <profile> add @perrylink/dsh-legal-intake`。公开/合成、alpha、非 GA。
+法务需求 EML 收件、线程去重与台账导出。 安装：`dsh plugin --profile <profile> add dsh-legal-intake`。公开/合成、alpha、非 GA。
 
 </details>
 
