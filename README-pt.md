@@ -2,11 +2,18 @@
 
 # dsh-legal-intake
 
+> **Repositório oficial.** O único repositório oficial deste pacote, mantido por PerryLink. Repositórios com o mesmo nome em outras contas não são afiliados. Apache-2.0.
+
 [![npm](https://img.shields.io/npm/v/dsh-legal-intake)](https://www.npmjs.com/package/dsh-legal-intake)
 [![CI](https://github.com/PerryLink/dsh-legal-intake/actions/workflows/ci.yml/badge.svg)](https://github.com/PerryLink/dsh-legal-intake/actions)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
 [![dsh-plugin](https://img.shields.io/badge/dsh--plugin-%E2%9C%93-green)](https://github.com/topics/dsh-plugin)
 [![docs](https://img.shields.io/badge/docs-domain%20index-0b5fff)](https://perrylink.github.io/dsh-plugins/)
+[![Gitee](https://img.shields.io/badge/Gitee-aggregate-c71d23?logo=gitee)](https://gitee.com/perrylink/dsh-plugins)
+[![dshfind](https://dshfind.com/api/badge/PerryLink/dsh-legal-intake?metric=downloads)](https://dshfind.com/plugins/PerryLink/dsh-legal-intake?ref=badge)
+[![DSH Market](https://raw.githubusercontent.com/2BingLing/dsh-market/master/assets/readme/badge-listed-en.svg)](https://dsh.market/)
+[![Node](https://img.shields.io/badge/node-24.9%2B-brightgreen)](#)
+[![npm downloads](https://img.shields.io/npm/dm/dsh-legal-intake)](https://www.npmjs.com/package/dsh-legal-intake)
 
 **Recepção de solicitações jurídicas de EML, deduplicação de threads e exportação de registro.**
 
@@ -19,6 +26,8 @@ dsh plugin --profile <profile> add dsh-legal-intake
 ```
 
 </div>
+
+> ⭐ Se isso ajudar, uma estrela facilita a próxima pessoa encontrar. Nada fica bloqueado por ela.
 
 ![Workflow diagram for dsh-legal-intake: local input, plugin, local output.](docs/assets/dsh-legal-intake-flow.svg)
 
@@ -78,6 +87,30 @@ As fixtures públicas/sintéticas ficam em `test/fixtures/`; `ACCEPTANCE.csv` re
 pnpm install --frozen-lockfile
 pnpm build && pnpm lint && pnpm typecheck && pnpm test
 ```
+
+## Compatibilidade
+
+| Superfície | Status |
+|---|---|
+| Harness | `dsh >=0.2.1-rc.3 <0.3.0` |
+| Node | `>=24.9.0 <25` |
+| Platforms | All; local files only |
+| Dados | No network, no model call, no upload |
+
+## Permissões e dados
+
+- Executa localmente; sem rede, sem modelo, sem upload.
+- Apenas fixtures públicas/sintéticas; sem dados ou evidência de clientes.
+- Alpha/parcial; não contabilizado, sem GA ou promessa de produção.
+- Pacotes congelados continuam instaláveis; sem novos recursos, apenas falhas reais.
+
+## Trabalho relacionado
+
+Pacotes irmãos e índices da família: [dsh-legal-clause](https://github.com/PerryLink/dsh-legal-clause) · [dsh-contract-suite](https://github.com/PerryLink/dsh-contract-suite)
+
+- [Índice de domínio](https://perrylink.github.io/dsh-plugins/)
+- [Família de checkers](https://perrylink.github.io/zh/checkers/)
+- [Família principal](https://github.com/PerryLink/dsh-kit)
 
 ## Família
 
