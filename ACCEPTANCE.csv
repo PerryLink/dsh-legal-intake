@@ -1,5 +1,5 @@
 req_id,metric,threshold,actual,script,evidence_sha256,pass,source,counted
-SKU-09-A01,邮件入库（50）,50/50,50,scripts/acceptance.mjs,ca0351bb7a59029d75dd0b46ab61dcb5ac53e1d5b2392536bf278bb97bc7ab5c,true,public/synthetic,false
-SKU-09-A02,线程/Message-ID 去重,5/5,5,scripts/acceptance.mjs,ca0351bb7a59029d75dd0b46ab61dcb5ac53e1d5b2392536bf278bb97bc7ab5c,true,public/synthetic,false
-SKU-09-A03,台账行,50,50,scripts/acceptance.mjs,ca0351bb7a59029d75dd0b46ab61dcb5ac53e1d5b2392536bf278bb97bc7ab5c,true,public/synthetic,false
-SKU-09-A04,台账 sheet,1,1,scripts/acceptance.mjs,ca0351bb7a59029d75dd0b46ab61dcb5ac53e1d5b2392536bf278bb97bc7ab5c,true,public/synthetic,false
+SKU-09-A01,邮件入库（50）,50/50,50,scripts/acceptance.mjs,9048285da021135209c97aecc10403f1d76e29dc58cf2fe260fbc1ae744829db,true,public/synthetic,false
+SKU-09-A02,线程/Message-ID 去重,5/5,5,scripts/acceptance.mjs,9048285da021135209c97aecc10403f1d76e29dc58cf2fe260fbc1ae744829db,true,public/synthetic,false
+SKU-09-A03,台账行,50,50,scripts/acceptance.mjs,9048285da021135209c97aecc10403f1d76e29dc58cf2fe260fbc1ae744829db,true,public/synthetic,false
+SKU-09-A04,台账 sheet,1,1,scripts/acceptance.mjs,9048285da021135209c97aecc10403f1d76e29dc58cf2fe260fbc1ae744829db,true,public/synthetic,false
