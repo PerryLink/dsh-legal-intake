@@ -1,6 +1,12 @@
 # Changelog
 
-## [0.1.0-alpha.7] — 2026-11-01
+## [0.1.0-alpha.8] — 2026-11-01
+
+### Added
+
+- `legal.conflict_check`: conflicts pre-check between a new matter and existing matters — normalised party names, opposing-side detection and same-party-on-both-sides issues. Read-only; not a substitute for a formal conflicts search. Verified by `node --test test/*.test.mjs` (11/11).
+
+## [Unreleased]
 
 ### Added
 

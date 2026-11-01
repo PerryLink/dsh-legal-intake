@@ -16,5 +16,11 @@
     "kind": "capability",
     "alt": "dsh-legal-intake real test run",
     "caption": "Real command: node --test test/intake-doctor.test.mjs — 4 tests passed, 0 failed (pre-intake EML QA). Run 2026-11-01; the image is rendered from the captured terminal output."
+  },
+  {
+    "path": "docs/assets/dsh-legal-intake-capability2.png",
+    "kind": "capability",
+    "alt": "dsh-legal-intake second capability run",
+    "caption": "Real command: node --test test/conflict.test.mjs — 4 tests passed, 0 failed (Conflicts pre-check: opposing sides and same-party-both-sides detection.) Run 2026-11-01; rendered from the captured terminal output."
   }
 ]
