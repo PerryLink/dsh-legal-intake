@@ -1,0 +1,14 @@
+[
+  {
+    "path": "docs/assets/dsh-legal-intake-hero.png",
+    "kind": "hero",
+    "alt": "dsh-legal-intake terminal output",
+    "caption": "Real dsh-legal-intake local test run; 3 tests passed."
+  },
+  {
+    "path": "docs/assets/dsh-legal-intake-demo.gif",
+    "kind": "demo",
+    "alt": "Animated dsh-legal-intake terminal session",
+    "caption": "The same run, assembled line by line."
+  }
+]

@@ -33,6 +33,10 @@ dsh plugin --profile <profile> add dsh-legal-intake
 
 *Flujo: entrada local → plugin → salida local. No requiere llamada a un modelo.*
 
+![Real dsh-legal-intake terminal output](docs/assets/dsh-legal-intake-hero.png)
+
+*Ejecución local real; sin modelo ni red.*
+
 ## Instalación
 
 Instalar y verificar:
@@ -84,7 +88,7 @@ dsh --profile <profile> --dump-config | grep dsh-legal-intake
 
 ### Ejemplo respaldado por fixture
 
-Entrada: [`fixtures/public/mit/sample_nda.txt`](fixtures/public/mit/sample_nda.txt)
+Entrada: [`fixtures/public/mit/sample_nda.txt`](https://github.com/PerryLink/dsh-legal-intake/blob/main/fixtures/public/mit/sample_nda.txt)
 
 Comando: `pnpm test`
 
@@ -134,6 +138,9 @@ pnpm build && pnpm lint && pnpm typecheck && pnpm test
 
 Paquetes hermanos e índices de familia: [dsh-legal-clause](https://github.com/PerryLink/dsh-legal-clause) · [dsh-contract-suite](https://github.com/PerryLink/dsh-contract-suite)
 
+Verificadores relacionados (tabla en inglés): [Related checkers](README.md#related-checkers).
+
+- [Solución de problemas (inglés)](TROUBLESHOOTING.md)
 - [Índice de dominio](https://perrylink.github.io/dsh-plugins/)
 - [Familia de checkers](https://perrylink.github.io/zh/checkers/)
 - [Familia principal](https://github.com/PerryLink/dsh-kit)

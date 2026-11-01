@@ -33,6 +33,10 @@ dsh plugin --profile <profile> add dsh-legal-intake
 
 *वर्कफ़्लो: स्थानीय इनपुट → प्लगइन → स्थानीय आउटपुट। मॉडल कॉल आवश्यक नहीं।*
 
+![Real dsh-legal-intake terminal output](docs/assets/dsh-legal-intake-hero.png)
+
+*वास्तविक स्थानीय परीक्षण; कोई मॉडल या नेटवर्क कॉल नहीं।*
+
 ## इंस्टॉल
 
 इंस्टॉल और सत्यापन:
@@ -84,7 +88,7 @@ dsh --profile <profile> --dump-config | grep dsh-legal-intake
 
 ### fixture-आधारित उदाहरण
 
-इनपुट: [`fixtures/public/mit/sample_nda.txt`](fixtures/public/mit/sample_nda.txt)
+इनपुट: [`fixtures/public/mit/sample_nda.txt`](https://github.com/PerryLink/dsh-legal-intake/blob/main/fixtures/public/mit/sample_nda.txt)
 
 कमांड: `pnpm test`
 
@@ -134,6 +138,9 @@ pnpm build && pnpm lint && pnpm typecheck && pnpm test
 
 सहोदर पैकेज और परिवार सूचकांक: [dsh-legal-clause](https://github.com/PerryLink/dsh-legal-clause) · [dsh-contract-suite](https://github.com/PerryLink/dsh-contract-suite)
 
+संबंधित चेकर (अंग्रेज़ी तालिका): [Related checkers](README.md#related-checkers).
+
+- [समस्या निवारण (अंग्रेज़ी)](TROUBLESHOOTING.md)
 - [डोमेन सूचकांक](https://perrylink.github.io/dsh-plugins/)
 - [चेकर परिवार](https://perrylink.github.io/zh/checkers/)
 - [मुख्य परिवार](https://github.com/PerryLink/dsh-kit)
