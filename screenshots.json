@@ -10,5 +10,11 @@
     "kind": "demo",
     "alt": "Animated dsh-legal-intake terminal session",
     "caption": "The same run, assembled line by line."
+  },
+  {
+    "path": "docs/assets/dsh-legal-intake-capability.png",
+    "kind": "capability",
+    "alt": "dsh-legal-intake real test run",
+    "caption": "Real command: node --test test/intake-doctor.test.mjs — 4 tests passed, 0 failed (pre-intake EML QA). Run 2026-11-01; the image is rendered from the captured terminal output."
   }
 ]

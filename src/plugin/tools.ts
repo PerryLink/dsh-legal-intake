@@ -3,5 +3,24 @@ const text=(t:string)=>[{type:'text' as const,text:t}];const sha=(v:string|Buffe
 export function createTools(deps:{requests:Table<RequestRecord>;baseDir:string}){
  const intake=defineTool({name:'legal.intake',description:'Parse EML messages, dedupe by Message-ID / thread, classify legal request type and store request rows. Local R1 write; no mailbox/network.',parameters:{messages:{type:'array',required:true,items:{type:'object',additionalProperties:false,properties:{eml_text:{type:'string',required:true},attachments:{type:'array',items:{type:'object',additionalProperties:false,properties:{name:{type:'string',required:true},sha256:{type:'string',required:true},size:{type:'number',required:true}}}}}}}},output:{schema:{type:'object',additionalProperties:false,properties:{requests:{type:'array',items:{type:'string'},required:true},duplicates:{type:'array',items:{type:'string'},required:true},types:{type:'json',required:true}}},render:(_a,v)=>text(`intake ${v.requests.length} new / ${v.duplicates.length} dup`)},async execute(a){const seen=new Set<string>();for(const[,r]of deps.requests.entries())seen.add(r.message_id);const ids:string[]=[],dups:string[]=[];const types:Record<string,number>={};for(const m of a.messages){const e=parseEml(m.eml_text,m.attachments??[]);if(seen.has(e.message_id)){dups.push(e.message_id);continue}const r:RequestRecord={request_id:`req_${sha(e.message_id).slice(0,12)}`,message_id:e.message_id,thread_id:e.thread_id,subject:e.subject,from:e.from,received_at:e.date||new Date().toISOString(),request_type:classify(e.subject,e.body),status:'new',attachment_count:e.attachments.length,created_at:new Date().toISOString()};await deps.requests.put(r.request_id,r);seen.add(e.message_id);ids.push(r.request_id);types[r.request_type]=(types[r.request_type]??0)+1}return{requests:ids,duplicates:dups,types}}})
  const ledger=defineTool({name:'legal.export_ledger',description:'Export intake ledger xlsx. Local R1 write.',parameters:{},output:{schema:{type:'object',additionalProperties:false,properties:{path:{type:'string',required:true},rows:{type:'number',required:true},sha256:{type:'string',required:true}}},render:(_a,v)=>text(`ledger ${v.rows} rows`)},async execute(){const rows=[...deps.requests.entries()].map(([,r])=>({request_id:r.request_id,subject:r.subject,from:r.from,received_at:r.received_at,type:r.request_type,status:r.status,attachments:r.attachment_count}));const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rows),'Requests');const d=path.join(deps.baseDir,'exports');await mkdir(d,{recursive:true});const p=path.join(d,'intake-ledger.xlsx');const b=Buffer.from(XLSX.write(wb,{type:'buffer',bookType:'xlsx'}));await writeFile(p,b);return{path:p,rows:rows.length,sha256:sha(b)}}})
- return[intake,ledger]
+ const doctor=defineTool({name:'legal.intake_doctor',description:'Pre-intake QA for a batch of EML messages: header parse, duplicate Message-ID, repeated thread, duplicate or empty attachment names. Read-only; nothing is stored.',parameters:{messages:{type:'array',required:true,items:{type:'object',additionalProperties:false,properties:{eml_text:{type:'string',required:true},attachments:{type:'array',items:{type:'object',additionalProperties:false,properties:{name:{type:'string',required:true},sha256:{type:'string',required:true},size:{type:'number',required:true}}}}}}}},output:{schema:{type:'object',additionalProperties:false,properties:{messages:{type:'number',required:true},issues:{type:'array',required:true,items:{type:'object',additionalProperties:false,properties:{code:{type:'string',required:true},detail:{type:'string',required:true}}}}}},render:(_a,v)=>text('doctor messages='+v.messages+' issues='+v.issues.length)},async execute(a){
+   const issues:{code:string;detail:string}[]=[]
+   const seenIds=new Set<string>(),seenThreads=new Set<string>()
+   for(const m of a.messages){
+     let e
+     try{ e=parseEml(m.eml_text,m.attachments??[]) }catch(err){ issues.push({code:'E_LEGAL_EML_INVALID',detail:String(err instanceof Error?err.message:err)}); continue }
+     if(seenIds.has(e.message_id)) issues.push({code:'E_LEGAL_MESSAGE_DUPLICATE',detail:e.message_id}); else seenIds.add(e.message_id)
+     if(seenThreads.has(e.thread_id)) issues.push({code:'E_LEGAL_THREAD_REPEATED',detail:e.thread_id}); else seenThreads.add(e.thread_id)
+     const names=new Set<string>()
+     for(const att of e.attachments){
+       if(!att.name.trim()) issues.push({code:'E_LEGAL_ATTACHMENT_NAME_EMPTY',detail:e.message_id})
+       else if(names.has(att.name)) issues.push({code:'E_LEGAL_ATTACHMENT_DUPLICATE',detail:att.name})
+       else names.add(att.name)
+       if(!(att.size>0)) issues.push({code:'E_LEGAL_ATTACHMENT_EMPTY',detail:att.name||'(unnamed)'})
+     }
+   }
+   return {messages:a.messages.length,issues}
+ }})
+
+ return[intake,ledger,doctor]
 }

@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.0-alpha.7] — 2026-11-01
+
+### Added
+
+- `legal.intake_doctor`: pre-intake QA for EML batches — header parse failures, duplicate Message-ID, repeated thread, duplicate/empty attachment names and zero-byte attachments, reported as stable codes instead of throwing. Read-only. Verified by `node --test test/*.test.mjs` (7/7).
+
 ## [0.1.0-alpha.6] — 2026-11-01
 
 ### Changed
