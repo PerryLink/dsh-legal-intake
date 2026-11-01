@@ -2,7 +2,7 @@
 
 All notable changes to `dsh-legal-intake` are documented here. The format follows Keep a Changelog; this project uses alpha versions.
 
-## [0.1.0-alpha.4] — 2026-11-01
+## [0.1.0-alpha.5] — 2026-11-01
 
 ### Added
 
