@@ -1,6 +1,6 @@
 {
   "name": "dsh-legal-intake",
-  "version": "0.1.0-alpha.10",
+  "version": "0.1.0-alpha.11",
   "description": "Legal request intake from EML, thread dedupe and ledger export.",
   "type": "module",
   "main": "./lib/plugin/index.js",
@@ -30,11 +30,26 @@
     "CHANGELOG.md",
     "TROUBLESHOOTING.md",
     "screenshots.json",
-    "icon.svg"
+    "icon.svg",
+    "samples"
   ],
   "dsh": {
     "bundle": {
       "patch": "./cordis.patch.yml"
+    },
+    "demo": {
+      "sample": "samples/quickstart/input",
+      "prompt": "我有一封客户发来的法务需求邮件和附件清单，帮我按线程去重、判断需求类型，再导出一份台账。",
+      "expect": "samples/quickstart/expected/result.json",
+      "screenshot": "docs/assets/quickstart.png",
+      "reads": [
+        "用户指定的 EML 邮件文件与附件清单（样例：samples/quickstart/input）"
+      ],
+      "writes": [
+        "$DSH_HOME/storages/dsh-legal-intake/exports/"
+      ],
+      "network": false,
+      "external": []
     }
   },
   "engines": {

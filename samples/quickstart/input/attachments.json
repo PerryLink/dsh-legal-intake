@@ -1,0 +1,26 @@
+{
+  "note": "合成附件清单：只有名称/大小/SHA-256 元数据，不含真实文件、真实邮箱或客户数据。其中一条是 0 字节的占位，用来演示入库前的 EML 体检。",
+  "sample": "samples/quickstart/input",
+  "messages": {
+    "synthetic-nda-request.eml": [
+      {
+        "name": "Project-Atlas-NDA-v3.docx",
+        "sha256": "8a34b89abd7c35bf9e7f17d1a20c5e43c292afb0096a351874d94142d3f8948e",
+        "size": 48213
+      },
+      {
+        "name": "Project-Atlas-NDA-v3.docx",
+        "sha256": "455f37dc120a65aa1f1ba8e01834503168f9b20f61effd79fce1272492183ffa",
+        "size": 0
+      }
+    ],
+    "synthetic-msa-request.eml": [
+      {
+        "name": "Project-Atlas-MSA-draft.docx",
+        "sha256": "ac634e116b237ebe8145ceffec6712b76b3864f2cc1276f3282614aecadba59d",
+        "size": 61204
+      }
+    ],
+    "synthetic-nda-resent.eml": []
+  }
+}

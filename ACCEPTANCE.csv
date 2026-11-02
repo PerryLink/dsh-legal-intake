@@ -1,7 +1,8 @@
 req_id,metric,threshold,actual,script,evidence_sha256,pass,source,counted
-SKU-09-A01,邮件入库（50）,50/50,50,scripts/acceptance.mjs,ab4ad94cc3ce119f565f4e792433e954f43dbfdeb303dcb1dbca576522018028,true,public/synthetic,false
-SKU-09-A02,线程/Message-ID 去重,5/5,5,scripts/acceptance.mjs,ab4ad94cc3ce119f565f4e792433e954f43dbfdeb303dcb1dbca576522018028,true,public/synthetic,false
-SKU-09-A03,台账行,50,50,scripts/acceptance.mjs,ab4ad94cc3ce119f565f4e792433e954f43dbfdeb303dcb1dbca576522018028,true,public/synthetic,false
-SKU-09-A04,台账 sheet,1,1,scripts/acceptance.mjs,ab4ad94cc3ce119f565f4e792433e954f43dbfdeb303dcb1dbca576522018028,true,public/synthetic,false
-SKU-09-A05,入库前 EML 体检,2,2,scripts/acceptance.mjs,ab4ad94cc3ce119f565f4e792433e954f43dbfdeb303dcb1dbca576522018028,true,public/synthetic,false
-SKU-09-A06,冲突预检,1,1,scripts/acceptance.mjs,ab4ad94cc3ce119f565f4e792433e954f43dbfdeb303dcb1dbca576522018028,true,public/synthetic,false
+SKU-09-A01,邮件入库（50）,50/50,50,scripts/acceptance.mjs,7cf9ead8eed285a80b83440ff6b9fd00b2f51ff078296e6c3b2d79ee928e42b8,true,public/synthetic,false
+SKU-09-A02,线程/Message-ID 去重,5/5,5,scripts/acceptance.mjs,7cf9ead8eed285a80b83440ff6b9fd00b2f51ff078296e6c3b2d79ee928e42b8,true,public/synthetic,false
+SKU-09-A03,台账行,50,50,scripts/acceptance.mjs,7cf9ead8eed285a80b83440ff6b9fd00b2f51ff078296e6c3b2d79ee928e42b8,true,public/synthetic,false
+SKU-09-A04,台账 sheet,1,1,scripts/acceptance.mjs,7cf9ead8eed285a80b83440ff6b9fd00b2f51ff078296e6c3b2d79ee928e42b8,true,public/synthetic,false
+SKU-09-A05,入库前 EML 体检,2,2,scripts/acceptance.mjs,7cf9ead8eed285a80b83440ff6b9fd00b2f51ff078296e6c3b2d79ee928e42b8,true,public/synthetic,false
+SKU-09-A06,冲突预检,1,1,scripts/acceptance.mjs,7cf9ead8eed285a80b83440ff6b9fd00b2f51ff078296e6c3b2d79ee928e42b8,true,public/synthetic,false
+PS1-QS01,quickstart 样例与金标一致,1/1,1,scripts/acceptance.mjs,43b3da6a6de5f89f626941909b890fce382859ffd5f78ea6f216028345b9c27b,true,synthetic/quickstart,true

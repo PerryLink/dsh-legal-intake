@@ -1,0 +1,52 @@
+{
+  "run_id": "sku09-1793629294542",
+  "scope": "SKU-09-S1",
+  "status": "partial",
+  "counted": false,
+  "note": "synthetic EML; user-approved public/synthetic; 0 real mailboxes",
+  "metrics": [
+    {
+      "i": "SKU-09-A01",
+      "m": "邮件入库（50）",
+      "t": "50/50",
+      "a": 50,
+      "p": true
+    },
+    {
+      "i": "SKU-09-A02",
+      "m": "线程/Message-ID 去重",
+      "t": "5/5",
+      "a": 5,
+      "p": true
+    },
+    {
+      "i": "SKU-09-A03",
+      "m": "台账行",
+      "t": "50",
+      "a": 50,
+      "p": true
+    },
+    {
+      "i": "SKU-09-A04",
+      "m": "台账 sheet",
+      "t": "1",
+      "a": 1,
+      "p": true
+    },
+    {
+      "i": "SKU-09-A05",
+      "m": "入库前 EML 体检",
+      "t": "2",
+      "a": 2,
+      "p": true
+    },
+    {
+      "i": "SKU-09-A06",
+      "m": "冲突预检",
+      "t": "1",
+      "a": 1,
+      "p": true
+    }
+  ],
+  "pass": true
+}

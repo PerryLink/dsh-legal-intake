@@ -1,0 +1,25 @@
+{
+  "sample": "samples/quickstart/input",
+  "synthetic": true,
+  "messages_read": 3,
+  "new_requests": 2,
+  "duplicates": 1,
+  "request_types": {
+    "MSA": 1,
+    "NDA": 1
+  },
+  "doctor_issue_codes": [
+    "E_LEGAL_ATTACHMENT_DUPLICATE",
+    "E_LEGAL_ATTACHMENT_EMPTY",
+    "E_LEGAL_MESSAGE_DUPLICATE",
+    "E_LEGAL_THREAD_REPEATED"
+  ],
+  "ledger": {
+    "rows": 2,
+    "file": "intake-ledger.xlsx"
+  },
+  "request_ids": [
+    "req_455da4f6c27e",
+    "req_f07404d28828"
+  ]
+}

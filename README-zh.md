@@ -37,6 +37,81 @@ dsh plugin --profile <profile> add dsh-legal-intake
 
 *本地真实测试运行；不调用模型或网络。*
 
+## 一句话
+
+把收到的法务需求 EML 邮件按线程去重、判断需求类型，再导出一份 Excel 台账。
+
+## 适合 / 不适合
+
+- **适合**：几十封客户或供应商发来的 EML 法务需求，需要按 Message-ID / 线程去重，再整理成一份能交给同事复核的台账。
+- **不适合**：需要自动连邮箱收信、或需要替你做法律意见与审批结论的场景；本包只在本地读取你给出的文件。
+
+## 输入
+
+- EML 纯文本（UTF-8）：至少包含 `Subject`、`From`、`Message-ID`，`Thread-Id` 可选；缺少前两个会报 `E_LEGAL_EML_INVALID`。
+- 附件清单 JSON：只写每个附件的 `name` / `sha256` / `size` 元数据，不读取附件内容本身。
+- 自带样例在 `samples/quickstart/input/`：3 封合成 EML + 1 份附件清单，合计远小于 500 KB。
+- 工具不设硬性文件上限；建议单批 ≤50 封邮件、附件清单 ≤200 行，便于人工复核。
+- 需求类型按 NDA / MSA / CONTRACT_REVIEW / DISPUTE / COMPLIANCE / OTHER 归类。
+
+## 输出
+
+- 终端摘要：读了几封、几条新需求、几条重复被跳过、入库前体检发现几个问题。
+- 台账：`$DSH_HOME/storages/dsh-legal-intake/exports/intake-ledger.xlsx`，工作表 `Requests`，一行一个需求。
+- 原 EML 与附件清单不会被修改；导入结果同时写入本地 storage domain。
+
+## 示例
+
+直接复制这句话：
+
+> 我有一封客户发来的法务需求邮件和附件清单，帮我按线程去重、判断需求类型，再导出一份台账。
+
+也可以自己跑（真实运行，截图即来自这条命令）：
+
+```sh
+node samples/quickstart/run.mjs
+```
+
+![dsh-legal-intake quickstart 真实运行输出](docs/assets/quickstart.png)
+
+*合成 EML → 金标 `samples/quickstart/expected/result.json`；命令与哈希见 `screenshots.json`。*
+
+## 权限
+
+- 读：你指定的 EML 文件与附件清单（由会话读取后作为参数传入）；不读其他目录
+- 写：`$DSH_HOME/storages/dsh-legal-intake`（`exports/intake-ledger.xlsx`）；不改原文件
+- 联网：否（源码中没有 HTTP / DNS / WebSocket 调用）
+- 外部系统：无（不连接邮箱、OA 或云服务，不上传数据）
+
+写文件的工具标 **R1（本地写）**，只读工具标 **R0**；逐项见下方工具表。
+
+## FAQ
+
+### 装不上怎么办？
+
+确认 DSH `>=0.2.1-rc.3 <0.4.0`、Node `>=24.9 <25`，并用全新的 `DSH_HOME` 重试；完整步骤见 `TROUBLESHOOTING.md`。
+
+### 同一封邮件为什么只入库一次？
+
+去重按 `Message-ID` 做，同一封重发邮件会被计入「重复」而不是新需求；`legal.intake_doctor` 还会同时提示重复的 `Message-ID` 和重复的 `Thread-Id`。
+
+### 附件清单对不上会怎样？
+
+体检会给出 `E_LEGAL_ATTACHMENT_DUPLICATE`（同名附件）和 `E_LEGAL_ATTACHMENT_EMPTY`（0 字节）；按提示改清单即可，不会改动原附件。
+
+### 能处理我的真实邮件吗？
+
+可以本地运行，但本包是 alpha、只用公开/合成数据验证，不构成法律意见；使用真实邮件前请脱敏并保留复核人。
+
+### 会联网或上传邮件吗？
+
+不会。解析、去重与导出台账都在本机完成。
+
+## 版本
+
+- 当前版本：`0.1.0-alpha.11`（与 `package.json` 一致）
+- 测试：`node --test test/*.test.mjs` 全绿（13 个用例，0 失败）
+
 ## 安装
 
 安装并验证：
@@ -76,6 +151,8 @@ dsh plugin --profile <profile> remove dsh-legal-intake
 |---|---|---|
 | `legal.intake` | 解析 EML 请求，分类请求类型，并按 Message-ID/线程去重 | R1 local write |
 | `legal.export_ledger` | 将请求台账导出为 xlsx | R1 local write |
+| `legal.intake_doctor` | 入库前的 EML 体检：缺头、重复 Message-ID/线程、空附件 | R0 |
+| `legal.conflict_check` | 新事项与既有事项的当事人冲突预检（只读） | R0 |
 
 ## 快速开始
 
@@ -84,9 +161,9 @@ dsh plugin --profile <profile> add dsh-legal-intake
 dsh --profile <profile> --dump-config | grep dsh-legal-intake
 ```
 
-## 示例
+## 验收
 
-### fixture 支撑的示例
+### fixture 支撑的验收行
 
 输入: [`fixtures/public/mit/sample_nda.txt`](https://github.com/PerryLink/dsh-legal-intake/blob/main/fixtures/public/mit/sample_nda.txt)
 
@@ -109,7 +186,8 @@ dsh --profile <profile> --dump-config | grep dsh-legal-intake
 
 ## 公开样例
 
-公开/合成 fixture 在 `fixtures/`；`ACCEPTANCE.csv` 记录公开检查，全部 `counted=false`。
+- `samples/quickstart/`：随 npm 包一起发布的合成样例（3 封 EML + 附件清单 + 金标），`node samples/quickstart/run.mjs --check` 可直接复现金标。
+- `fixtures/`：仅仓库内保留的公开 fixture；`ACCEPTANCE.csv` 记录公开检查，除 `PS1-QS01` 外全部 `counted=false`。
 
 ## 开发
 

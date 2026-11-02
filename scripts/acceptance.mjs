@@ -17,3 +17,20 @@ const docTools=createTools({requests:new T(),baseDir:'/tmp/legal-doctor-acc'});c
     fs.writeFileSync(file, lines.join('\n') + '\n')
   }
 }
+
+// PS1-QS01: recompute the shipped quickstart and hash its golden file as evidence.
+{
+  const { execFileSync } = await import('node:child_process')
+  const { readFileSync, writeFileSync: writeSync } = await import('node:fs')
+  const { createHash: hashOf } = await import('node:crypto')
+  execFileSync(process.execPath, ['samples/quickstart/run.mjs', '--check'], { cwd: process.cwd(), encoding: 'utf8' })
+  const expected = readFileSync('samples/quickstart/expected/result.json')
+  const qsSha = hashOf('sha256').update(expected).digest('hex')
+  const file = 'ACCEPTANCE.csv'
+  const lines = readFileSync(file, 'utf8').trim().split('\n')
+  if (!lines.some((line) => line.startsWith('PS1-QS01,'))) {
+    lines.push(`PS1-QS01,quickstart 样例与金标一致,1/1,1,scripts/acceptance.mjs,${qsSha},true,synthetic/quickstart,true`)
+    writeSync(file, lines.join('\n') + '\n')
+  }
+  console.log('quickstart ok; PS1-QS01 evidence', qsSha.slice(0, 12))
+}

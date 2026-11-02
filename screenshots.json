@@ -1,5 +1,18 @@
 [
   {
+    "path": "docs/assets/quickstart.png",
+    "kind": "quickstart",
+    "alt": "dsh-legal-intake quickstart run on the shipped synthetic EML batch",
+    "caption": "Real run: node samples/quickstart/run.mjs on samples/quickstart/input (3 synthetic EMLs + attachment manifest); output matches samples/quickstart/expected/result.json.",
+    "command": "node samples/quickstart/run.mjs",
+    "run_at": "2026-11-02T22:14:09+08:00",
+    "output_sha256": "43b3da6a6de5f89f626941909b890fce382859ffd5f78ea6f216028345b9c27b",
+    "output_path": "samples/quickstart/expected/result.json",
+    "log": "docs/assets/quickstart.log",
+    "log_sha256": "20dbb25612fc7dd4cbe83dfd0b6c604d5c8a88e2852d5c1e792f1f6a6166c099",
+    "image_sha256": "9e131530d568e6aeb5404b929478dfe65569182fbcfcaff2b9d054b11a76d86e"
+  },
+  {
     "path": "docs/assets/dsh-legal-intake-hero.png",
     "kind": "hero",
     "alt": "dsh-legal-intake terminal output",
