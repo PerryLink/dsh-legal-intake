@@ -1,6 +1,11 @@
 # Changelog
 
-## [0.1.0-alpha.8] — 2026-11-01
+## [0.1.0-alpha.9] — 2026-11-01
+
+### Security / Fixes
+
+- Release configuration hardening: wider host peer range and a build step before publish.
+
 
 ### Added
 
