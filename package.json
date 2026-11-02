@@ -1,6 +1,6 @@
 {
   "name": "dsh-legal-intake",
-  "version": "0.1.0-alpha.9",
+  "version": "0.1.0-alpha.10",
   "description": "Legal request intake from EML, thread dedupe and ledger export.",
   "type": "module",
   "main": "./lib/plugin/index.js",
@@ -99,5 +99,13 @@
   "bugs": {
     "url": "https://github.com/PerryLink/dsh-legal-intake/issues"
   },
-  "icon": "icon.svg"
+  "icon": "icon.svg",
+  "peerDependenciesMeta": {
+    "@deepseek-ai/dsh-storage-domain": {
+      "optional": true
+    },
+    "@deepseek-ai/dsh-tools": {
+      "optional": true
+    }
+  }
 }
