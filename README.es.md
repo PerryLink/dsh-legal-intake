@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-dark.svg">
-  <img src="docs/assets/dsh-legal-intake-flow-light.svg" width="100%" alt="Flujo de datos de dsh-legal-intake: EML local + manifiesto de adjuntos → legal.intake_doctor → legal.intake (parseo, clasificación, deduplicación por Message-ID) → legal.export_ledger → intake-ledger.xlsx; las solicitudes viven en el dominio de almacenamiento legal y las exportaciones en $DSH_HOME/storages/dsh-legal-intake/exports/, sin red ni llamada a modelo">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-hero-en-dark.webp">
+  <img src="docs/assets/dsh-legal-intake-hero-en-light.webp" width="100%" alt="Banner de dsh-legal-intake: la columna izquierda lleva el nombre del plugin, el título «EML in, a ledger out» y dos líneas de valor; a la derecha, una bandeja de solo lectura con 3 EML sintéticos, 1 reenvío detenido por la deduplicación por Message-ID y 2 registros en el libro (req_455da4f6c27e, req_f07404d28828, hoja Requests), con los 4 códigos del doctor y el intake-ledger.xlsx exportado debajo">
 </picture>
 
 # dsh-legal-intake
@@ -39,6 +39,11 @@ Recibe correos EML con solicitudes legales, los deduplica por hilo, clasifica el
 
 - **Encaja**: unas decenas de EML con solicitudes legales de clientes o proveedores que deben deduplicarse por Message-ID / hilo y convertirse en un registro que un colega pueda revisar.
 - **No encaja**: leer un buzón automáticamente o emitir opiniones legales y decisiones de aprobación por ti; el paquete solo lee los archivos que le entregas.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-v5-dark.svg">
+  <img src="docs/assets/dsh-legal-intake-flow-v5-light.svg" width="100%" alt="Estructura de dsh-legal-intake: un lote de EML se analiza una vez con parseEml() (Subject y From obligatorios, si faltan se lanza E_LEGAL_EML_INVALID; sin Message-ID se usa un hash del contenido y sin Thread-Id se recurre al Message-ID); después se bifurca en dos puertas: el lado de solo lectura ejecuta legal.intake_doctor (4 códigos para estos 3 mensajes) y legal.conflict_check (nombres normalizados, lados opuestos como conflicts, un mismo nombre en ambos lados como E_LEGAL_PARTY_BOTH_SIDES); el lado de escritura local deduplica por Message-ID (3 mensajes → 2 solicitudes nuevas / 1 duplicada), clasifica en el orden NDA → MSA → CONTRACT_REVIEW → DISPUTE → COMPLIANCE → OTHER, guarda las filas en la tabla requests del dominio legal y exporta intake-ledger.xlsx (hoja Requests, 2 filas)">
+</picture>
 
 ## Instalación en tres pasos
 
@@ -354,7 +359,7 @@ node samples/quickstart/run.mjs --check                  # comparar campo por ca
 | `scripts/` | Scripts de build / verificación / aceptación y el generador de imágenes del README |
 | `test/` | `node --test` (6 archivos / 13 casos) |
 
-El código TypeScript está en `src/` y la salida de build en `lib/`. Versión actual del repositorio `0.1.0` (coincide con `package.json`); `node --test test/*.test.mjs` pasa en verde (6 archivos / 13 casos, 0 fallos). El diagrama de cabecera lo genera programáticamente [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) (Python; salida `docs/assets/dsh-legal-intake-flow-{light,dark}.svg`) y se puede volver a ejecutar sin problema.
+El código TypeScript está en `src/` y la salida de build en `lib/`. Versión actual del repositorio `0.1.0` (coincide con `package.json`); `node --test test/*.test.mjs` pasa en verde (6 archivos / 13 casos, 0 fallos). Las imágenes del README se generan programáticamente con [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) —el banner hero con Pillow (cuatro archivos, zh/en × claro/oscuro) y el diagrama de estructura como SVG escrito a mano (flow-v5 claro y oscuro)— y se pueden volver a ejecutar; el antiguo `dsh-legal-intake-flow-{light,dark}.svg` de una sola versión y las capturas de terminal se conservan en `docs/assets/` para los enlaces existentes, mientras que los README solo referencian las imágenes nuevas.
 
 Topics: `deepseek-harness`, `dsh`, `dsh-plugin`, `legal`, `intake`, `contract`, `perrylink`, `eml`
 

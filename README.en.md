@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-dark.svg">
-  <img src="docs/assets/dsh-legal-intake-flow-light.svg" width="100%" alt="dsh-legal-intake data flow: local EML + attachment manifest → legal.intake_doctor → legal.intake (parse, classify, dedupe by Message-ID) → legal.export_ledger → intake-ledger.xlsx; requests live in the legal storage domain and exports under $DSH_HOME/storages/dsh-legal-intake/exports/, with no network and no model call">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-hero-en-dark.webp">
+  <img src="docs/assets/dsh-legal-intake-hero-en-light.webp" width="100%" alt="dsh-legal-intake banner: the left column carries the plugin name, the title 'EML in, a ledger out' and two value lines; the right side shows a read-only inbox of 3 synthetic EML messages, 1 resend stopped by Message-ID dedupe, 2 records landing in the ledger (req_455da4f6c27e, req_f07404d28828, sheet Requests), with the doctor's 4 issue codes and the exported intake-ledger.xlsx underneath">
 </picture>
 
 # dsh-legal-intake
@@ -39,6 +39,11 @@ Collect legal-request EML emails, deduplicate by thread, classify the request ty
 
 - **Good fit**: a few dozen EML legal requests from clients or suppliers that must be deduplicated by Message-ID / thread and turned into a ledger a colleague can review.
 - **Not a fit**: automatically reading a mailbox, or producing legal opinions and approval decisions for you; the package only reads the files you hand it.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-v5-dark.svg">
+  <img src="docs/assets/dsh-legal-intake-flow-v5-light.svg" width="100%" alt="dsh-legal-intake structure: a batch of EML is parsed once by parseEml() (Subject and From required, otherwise E_LEGAL_EML_INVALID; a missing Message-ID falls back to a content hash, a missing Thread-Id to the Message-ID), then forks into two gates — the read-only side runs legal.intake_doctor (4 codes for these 3 messages) and legal.conflict_check (normalised party names, opposite sides recorded as conflicts, one name on both sides reported as E_LEGAL_PARTY_BOTH_SIDES); the local-write side dedupes by Message-ID (3 messages → 2 new requests / 1 duplicate), classifies in the fixed NDA → MSA → CONTRACT_REVIEW → DISPUTE → COMPLIANCE → OTHER order, stores rows in the legal requests table and exports intake-ledger.xlsx (sheet Requests, 2 rows)">
+</picture>
 
 ## Three-step setup
 
@@ -354,7 +359,7 @@ node samples/quickstart/run.mjs --check                  # compare field by fiel
 | `scripts/` | Build / verification / acceptance scripts and the README asset generator |
 | `test/` | `node --test` (6 files / 13 cases) |
 
-TypeScript sources live in `src/`, build output in `lib/`. Current repository version `0.1.0` (matches `package.json`); `node --test test/*.test.mjs` is green (6 files / 13 cases, 0 failures). The hero diagram is generated programmatically by [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) (Python; outputs `docs/assets/dsh-legal-intake-flow-{light,dark}.svg`) and is safe to re-run.
+TypeScript sources live in `src/`, build output in `lib/`. Current repository version `0.1.0` (matches `package.json`); `node --test test/*.test.mjs` is green (6 files / 13 cases, 0 failures). The README pictures are generated programmatically by [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) — the hero banner with Pillow (four files, zh/en × light/dark), the structure diagram as hand-written SVG (flow-v5 light and dark) — and are safe to re-run; the older single-skin `dsh-legal-intake-flow-{light,dark}.svg` and the terminal captures stay in `docs/assets/` for existing links, while the READMEs reference only the new images.
 
 Topics: `deepseek-harness`, `dsh`, `dsh-plugin`, `legal`, `intake`, `contract`, `perrylink`, `eml`
 

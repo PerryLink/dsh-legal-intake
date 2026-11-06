@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="660" viewBox="0 0 1100 660" role="img" aria-labelledby="fig-title fig-desc">
+<title id="fig-title">dsh-legal-intake: one batch, one parse, two gates - read-only doctor vs. dedupe-classify-export write path</title>
+<desc id="fig-desc">A batch of three synthetic EML messages is parsed once by parseEml(). Band 01 shows the input files together with the parse result: Subject and From are required, Date is optional, a missing Message-ID falls back to mid-&lt;content hash&gt; and a missing Thread-Id falls back to the Message-ID. A fork then feeds two gates. Gate 02 is read-only and never throws: legal.intake_doctor reports four codes for this sample (E_LEGAL_MESSAGE_DUPLICATE, E_LEGAL_THREAD_REPEATED, E_LEGAL_ATTACHMENT_DUPLICATE, E_LEGAL_ATTACHMENT_EMPTY); legal.conflict_check takes a separate parties input, normalises names and reports opposing sides. Gate 03 is the local write path: legal.intake dedupes against seen Message-IDs (3 messages become 2 new requests and 1 duplicate that is counted but not stored), classifies in the fixed order NDA, MSA, CONTRACT_REVIEW, DISPUTE, COMPLIANCE, OTHER (this sample: NDA 1, MSA 1), stores two records in the legal domain requests table (request_id = req_ + sha256(Message-ID)[:12], status new), and legal.export_ledger writes exports/intake-ledger.xlsx with sheet Requests and 2 rows. The footer keeps the boundary visible: the source is read-only, there is no network and no model call, and writes go only to exports/ and legal.requests.</desc>
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="0.18" y2="1">
+    <stop offset="0" stop-color="#131a2a"/><stop offset="1" stop-color="#0c1016"/>
+  </linearGradient>
+  <filter id="soft" x="-30%" y="-30%" width="160%" height="180%">
+    <feDropShadow dx="0" dy="7" stdDeviation="9" flood-color="#000000" flood-opacity="0.52"/>
+  </filter>
+  <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+    <circle cx="1.2" cy="1.2" r="1.2" fill="#2a3346"/>
+  </pattern>
+</defs>
+<rect x="0" y="0" width="1100" height="660" rx="22" fill="url(#bg)"/>
+<rect x="0" y="0" width="1100" height="660" rx="22" fill="url(#dots)" opacity="0.5"/>
+
+<text x="44" y="52" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="28" xml:space="preserve" font-weight="700">dsh-legal-intake</text>
+<text x="44" y="78" fill="#a8b1c4" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="14.5" xml:space="preserve" font-weight="400">One batch, two gates: a read-only doctor on one side, dedupe → classify → export on the other.</text>
+<rect x="860.0" y="24" width="196.0" height="20" rx="10.0" fill="#242d42" stroke="none" stroke-width="1"/><text x="958.0" y="37.74" fill="#8496f5" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="700" text-anchor="middle">quickstart · 3 EML · synthetic</text>
+<text x="1056" y="64" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">no network · no model call</text>
+<text x="44" y="106" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">IN  ·  messages[] { eml_text, attachments[name · sha256 · size] }  ·  UTF-8  ·  local files</text>
+<text x="1056" y="106" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">OUT  ·  issues[] · requests · intake-ledger.xlsx</text>
+<line x1="44" y1="118" x2="1056" y2="118" stroke="#2b3348" stroke-width="1" stroke-linecap="round"/>
+<text x="44" y="142" fill="#8496f5" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="12" xml:space="preserve" font-weight="700">01</text>
+<text x="70" y="142" fill="#8496f5" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="12.5" xml:space="preserve" font-weight="700" letter-spacing="1.2">INPUT → PARSE</text>
+<text x="1056" y="142" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">parseEml() · one parse, both gates read the same batch</text>
+<rect x="44" y="152" width="1012" height="138" rx="18" fill="#1b2231" stroke="#2e374b" stroke-width="1.4" filter="url(#soft)"/>
+<rect x="45" y="153" width="4" height="136" rx="2" fill="#8496f5"/>
+<text x="60" y="172" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">local inputs · read-only</text>
+<rect x="60" y="182" width="14" height="11" rx="2" fill="none" stroke="#8496f5" stroke-width="1.4"/><path d="M61 183L67.0 188.6L73 183" fill="none" stroke="#8496f5" stroke-width="1.4" stroke-linejoin="round"/>
+<text x="82" y="192" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="12.5" xml:space="preserve" font-weight="400">synthetic-nda-request.eml</text>
+<text x="430" y="192" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">2 att · 09:12</text>
+<rect x="60" y="203" width="14" height="11" rx="2" fill="none" stroke="#8496f5" stroke-width="1.4"/><path d="M61 204L67.0 209.6L73 204" fill="none" stroke="#8496f5" stroke-width="1.4" stroke-linejoin="round"/>
+<text x="82" y="213" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="12.5" xml:space="preserve" font-weight="400">synthetic-msa-request.eml</text>
+<text x="430" y="213" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">1 att · 11:40</text>
+<rect x="60" y="224" width="14" height="11" rx="2" fill="none" stroke="#8496f5" stroke-width="1.4"/><path d="M61 225L67.0 230.6L73 225" fill="none" stroke="#8496f5" stroke-width="1.4" stroke-linejoin="round"/>
+<text x="82" y="234" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="12.5" xml:space="preserve" font-weight="400">synthetic-nda-resent.eml</text>
+<text x="430" y="234" fill="#d9a441" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">0 att · 15:05 · resend</text>
+<rect x="60" y="245" width="14" height="11" rx="2" fill="none" stroke="#737b8d" stroke-width="1.4"/><path d="M61 246L67.0 251.6L73 246" fill="none" stroke="#737b8d" stroke-width="1.4" stroke-linejoin="round"/>
+<text x="82" y="255" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="12.5" xml:space="preserve" font-weight="400">attachments.json</text>
+<text x="430" y="255" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">name / sha256 / size</text>
+<line x1="452" y1="168" x2="452" y2="258" stroke="#2b3348" stroke-width="1" stroke-linecap="round"/>
+<line x1="748" y1="168" x2="748" y2="258" stroke="#2b3348" stroke-width="1" stroke-linecap="round"/>
+<text x="472" y="172" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">Eml · parsed</text>
+<text x="472" y="194" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">Subject</text>
+<text x="523.0" y="194" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">NDA review request - Project Atlas</text>
+<text x="472" y="220" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">From</text>
+<text x="511.0" y="220" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">Dana Li &lt;dana.li@example.test&gt;</text>
+<text x="472" y="246" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">Date</text>
+<text x="508.0" y="246" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">Tue, 20 Oct 2026 09:12:00 +0000</text>
+<text x="762" y="194" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">Message-ID</text>
+<text x="836.0" y="194" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">&lt;syn-atlas-nda-001@example.test&gt;</text>
+<text x="762" y="220" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">Thread-Id</text>
+<text x="825.0" y="220" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">&lt;thread-atlas-001@example.test&gt;</text>
+<text x="762" y="246" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">attachments[]</text>
+<text x="847.0" y="246" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">2 · 1 · 0 (metadata)</text>
+<line x1="60" y1="264" x2="1040" y2="264" stroke="#2b3348" stroke-width="1" stroke-linecap="round"/>
+<text x="60" y="282" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">no Subject / From → E_LEGAL_EML_INVALID (throws)   ·   no Message-ID → mid-&lt;content hash&gt;   ·   no Thread-Id → = Message-ID   ·   attachment content is never read</text>
+<line x1="550" y1="290" x2="550" y2="301" stroke="#8496f5" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>
+<line x1="284" y1="301" x2="802" y2="301" stroke="#8496f5" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>
+<line x1="284" y1="301" x2="284" y2="308" stroke="#8496f5" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>
+<line x1="802" y1="301" x2="802" y2="308" stroke="#8496f5" stroke-width="1.4" stroke-linecap="round" opacity="0.55"/>
+<path d="M280 306L288 306L284 314Z" fill="#8496f5"/>
+<path d="M798 306L806 306L802 314Z" fill="#8496f5"/>
+<rect x="44" y="314" width="480" height="264" rx="18" fill="#1b2231" stroke="#2e374b" stroke-width="1.6" filter="url(#soft)"/>
+<text x="60" y="344" fill="#8496f5" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="12" xml:space="preserve" font-weight="700">02</text>
+<text x="86" y="344" fill="#8496f5" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="13" xml:space="preserve" font-weight="700" letter-spacing="0.6">R0 · READ-ONLY</text>
+<text x="508" y="344" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">no writes · never throws</text>
+<line x1="60" y1="356" x2="508" y2="356" stroke="#2b3348" stroke-width="1" stroke-linecap="round"/>
+<text x="60" y="376" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="700">legal.intake_doctor</text>
+<text x="508" y="376" fill="#8496f5" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11.5" xml:space="preserve" font-weight="700" text-anchor="end">3 messages → 4 issues</text>
+<rect x="60" y="391" width="4" height="4" rx="1" fill="#8496f5"/>
+<text x="76" y="400" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="400">E_LEGAL_MESSAGE_DUPLICATE</text>
+<text x="508" y="400" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11.5" xml:space="preserve" font-weight="400" text-anchor="end">same Message-ID</text>
+<rect x="60" y="412" width="4" height="4" rx="1" fill="#8496f5"/>
+<text x="76" y="421" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="400">E_LEGAL_THREAD_REPEATED</text>
+<text x="508" y="421" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11.5" xml:space="preserve" font-weight="400" text-anchor="end">same Thread-Id</text>
+<rect x="60" y="433" width="4" height="4" rx="1" fill="#8496f5"/>
+<text x="76" y="442" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="400">E_LEGAL_ATTACHMENT_DUPLICATE</text>
+<text x="508" y="442" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11.5" xml:space="preserve" font-weight="400" text-anchor="end">same file name</text>
+<rect x="60" y="454" width="4" height="4" rx="1" fill="#8496f5"/>
+<text x="76" y="463" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="400">E_LEGAL_ATTACHMENT_EMPTY</text>
+<text x="508" y="463" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11.5" xml:space="preserve" font-weight="400" text-anchor="end">0-byte attachment</text>
+<line x1="60" y1="476" x2="508" y2="476" stroke="#2b3348" stroke-width="1" stroke-linecap="round"/>
+<text x="60" y="492" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="700">legal.conflict_check</text>
+<text x="508" y="492" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">separate parties input · R0</text>
+<text x="60" y="510" fill="#a8b1c4" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11.5" xml:space="preserve" font-weight="400">new_parties[] × existing[ matter_id, parties[] ]</text>
+<text x="60" y="528" fill="#a8b1c4" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11.5" xml:space="preserve" font-weight="400">same name, opposite sides → conflicts[]</text>
+<text x="60" y="546" fill="#a8b1c4" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11.5" xml:space="preserve" font-weight="400">one name as client + adverse → E_LEGAL_PARTY_BOTH_SIDES</text>
+<text x="60" y="562" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">names normalised: trim · lowercase · spaces collapsed</text>
+<rect x="548" y="314" width="508" height="264" rx="18" fill="#1b2231" stroke="#8496f5" stroke-width="1.8" filter="url(#soft)"/>
+<text x="564" y="344" fill="#8496f5" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="12" xml:space="preserve" font-weight="700">03</text>
+<text x="590" y="344" fill="#8496f5" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="13" xml:space="preserve" font-weight="700" letter-spacing="0.6">R1 · LOCAL WRITE</text>
+<text x="1040" y="344" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">legal.intake → legal.export_ledger</text>
+<line x1="564" y1="356" x2="1040" y2="356" stroke="#2b3348" stroke-width="1" stroke-linecap="round"/>
+<text x="564" y="376" fill="#8496f5" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="700" letter-spacing="1.2">DEDUPE</text>
+<text x="792" y="376" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">seen(Message-ID)</text>
+<text x="564" y="404" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="22" xml:space="preserve" font-weight="700">3</text>
+<text x="584" y="404" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="400">→</text>
+<text x="604" y="404" fill="#8496f5" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="24" xml:space="preserve" font-weight="700">2</text>
+<text x="632" y="404" fill="#a8b1c4" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11.5" xml:space="preserve" font-weight="700">new</text>
+<text x="564" y="426" fill="#a8b1c4" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11.5" xml:space="preserve" font-weight="400">1 duplicate · counted, never stored</text>
+<line x1="564" y1="442" x2="792" y2="442" stroke="#2b3348" stroke-width="1" stroke-linecap="round"/>
+<text x="564" y="462" fill="#8496f5" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="700" letter-spacing="1.2">CLASSIFY</text>
+<text x="792" y="462" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">first match wins</text>
+<text x="564" y="482.0" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">1</text>
+<text x="580" y="482.0" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="400">NDA</text>
+<text x="792" y="482.0" fill="#8496f5" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11.5" xml:space="preserve" font-weight="700" text-anchor="end">1</text>
+<text x="564" y="498.4" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">2</text>
+<text x="580" y="498.4" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="400">MSA</text>
+<text x="792" y="498.4" fill="#8496f5" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11.5" xml:space="preserve" font-weight="700" text-anchor="end">1</text>
+<text x="564" y="514.8" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">3</text>
+<text x="580" y="514.8" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="400">CONTRACT_REVIEW</text>
+<text x="792" y="514.8" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11.5" xml:space="preserve" font-weight="400" text-anchor="end">0</text>
+<text x="564" y="531.2" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">4</text>
+<text x="580" y="531.2" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="400">DISPUTE</text>
+<text x="792" y="531.2" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11.5" xml:space="preserve" font-weight="400" text-anchor="end">0</text>
+<text x="564" y="547.6" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">5</text>
+<text x="580" y="547.6" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="400">COMPLIANCE</text>
+<text x="792" y="547.6" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11.5" xml:space="preserve" font-weight="400" text-anchor="end">0</text>
+<text x="564" y="564.0" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">6</text>
+<text x="580" y="564.0" fill="#f0f3f9" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="13" xml:space="preserve" font-weight="400">OTHER</text>
+<text x="792" y="564.0" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11.5" xml:space="preserve" font-weight="400" text-anchor="end">0</text>
+<text x="816" y="376" fill="#8496f5" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="700" letter-spacing="1.2">REQUESTS</text>
+<text x="1040" y="376" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">legal domain v1 · 10 fields</text>
+<rect x="816" y="386" width="224" height="52" rx="12" fill="#202839" stroke="#2e374b" stroke-width="1.2"/>
+<text x="828" y="402" fill="#f0f3f9" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">MSA request - Project Atlas rollout</text>
+<text x="828" y="417" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">req_455da4f6c27e</text>
+<text x="828" y="431" fill="#a8b1c4" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">MSA · new · 1 att</text>
+<rect x="816" y="446" width="224" height="52" rx="12" fill="#202839" stroke="#2e374b" stroke-width="1.2"/>
+<text x="828" y="462" fill="#f0f3f9" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">NDA review request - Project Atlas</text>
+<text x="828" y="477" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">req_f07404d28828</text>
+<text x="828" y="491" fill="#a8b1c4" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">NDA · new · 2 att</text>
+<line x1="794" y1="398" x2="808" y2="398" stroke="#8496f5" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="3 3" opacity="0.7"/>
+<path d="M806 394L812 398L806 402Z" fill="#8496f5"/>
+<rect x="816" y="510" width="224" height="60" rx="12" fill="#242d42" stroke="#8496f5" stroke-width="1.2"/>
+<text x="828" y="532" fill="#8496f5" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11.5" xml:space="preserve" font-weight="700">intake-ledger.xlsx</text>
+<text x="828" y="548" fill="#a8b1c4" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">sheet Requests · 2 rows</text>
+<text x="828" y="562" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">$DSH_LEGAL_HOME/exports/</text>
+<line x1="44" y1="588" x2="1056" y2="588" stroke="#8496f5" stroke-width="1.2" stroke-linecap="round" stroke-dasharray="4 6" opacity="0.35"/>
+<circle cx="48" cy="602" r="3" fill="#8496f5"/>
+<text x="58" y="606" fill="#f0f3f9" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11.5" xml:space="preserve" font-weight="700">source read-only</text>
+<text x="167.0" y="606" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">EML and manifest never modified</text>
+<circle cx="456" cy="602" r="3" fill="#8496f5"/>
+<text x="466" y="606" fill="#f0f3f9" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11.5" xml:space="preserve" font-weight="700">no network</text>
+<text x="542.0" y="606" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">no model call</text>
+<circle cx="764" cy="602" r="3" fill="#8496f5"/>
+<text x="774" y="606" fill="#f0f3f9" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11.5" xml:space="preserve" font-weight="700">writes only</text>
+<text x="848.0" y="606" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">exports/ + legal.requests</text>
+<text x="44" y="630" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400">R0 legal.intake_doctor · legal.conflict_check      R1 legal.intake · legal.export_ledger</text>
+<text x="1056" y="630" fill="#737b8d" font-family="Consolas,'Microsoft YaHei',ui-monospace,monospace" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">request_id = req_ + sha256(Message-ID)[:12]</text>
+<text x="44" y="650" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400">0.1.0 · Apache-2.0 · synthetic sample only</text>
+<text x="1056" y="650" fill="#737b8d" font-family="'Microsoft YaHei','Segoe UI','PingFang SC','Noto Sans CJK SC',sans-serif" font-size="11" xml:space="preserve" font-weight="400" text-anchor="end">samples/quickstart/expected/result.json · 3 EML → 2 rows</text>
+</svg>

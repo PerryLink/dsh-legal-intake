@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-dark.svg">
-  <img src="docs/assets/dsh-legal-intake-flow-light.svg" width="100%" alt="dsh-legal-intake डेटा प्रवाह: स्थानीय EML + अनुलग्नक मैनिफ़ेस्ट → legal.intake_doctor → legal.intake (पार्स, वर्गीकरण, Message-ID से डुप्लिकेट हटाना) → legal.export_ledger → intake-ledger.xlsx; अनुरोध legal स्टोरेज डोमेन में और निर्यात $DSH_HOME/storages/dsh-legal-intake/exports/ में रहते हैं, कोई नेटवर्क और कोई मॉडल कॉल नहीं">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-hero-en-dark.webp">
+  <img src="docs/assets/dsh-legal-intake-hero-en-light.webp" width="100%" alt="dsh-legal-intake बैनर: बाएँ स्तंभ में प्लगइन का नाम, शीर्षक 'EML in, a ledger out' और दो मूल्य-पंक्तियाँ; दाईं ओर 3 सिंथेटिक EML का केवल-पढ़ने योग्य इनबॉक्स, Message-ID डिडुप्लिकेशन से रुका 1 दोबारा भेजा गया संदेश और लेजर में 2 रिकॉर्ड (req_455da4f6c27e, req_f07404d28828, शीट Requests), नीचे doctor के 4 कोड और निर्यात की गई intake-ledger.xlsx">
 </picture>
 
 # dsh-legal-intake
@@ -39,6 +39,11 @@ dsh plugin --profile <profile> add dsh-legal-intake
 
 - **उपयुक्त**: ग्राहकों या आपूर्तिकर्ताओं से आए कुछ दर्जन EML कानूनी अनुरोध, जिन्हें Message-ID / थ्रेड से डुप्लिकेट हटाकर ऐसे लेजर में बदलना है जिसे सहकर्मी समीक्षा कर सके।
 - **उपयुक्त नहीं**: मेलबॉक्स से अपने आप मेल पढ़ना, या आपके लिए कानूनी राय और अनुमोदन निर्णय देना; पैकेज केवल वही फ़ाइलें पढ़ता है जो आप देते हैं।
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-v5-dark.svg">
+  <img src="docs/assets/dsh-legal-intake-flow-v5-light.svg" width="100%" alt="dsh-legal-intake संरचना: EML का एक बैच पहले parseEml() से पढ़ा जाता है (Subject और From अनिवार्य, न हों तो E_LEGAL_EML_INVALID; Message-ID न हो तो सामग्री-हैश और Thread-Id न हो तो Message-ID पर वापसी); फिर दो गेट में बँटता है — केवल-पढ़ने वाला पक्ष legal.intake_doctor (इन 3 संदेशों के 4 कोड) और legal.conflict_check (पक्षकार नाम सामान्यीकृत, विपरीत पक्ष conflicts में, एक ही नाम दोनों पक्षों पर E_LEGAL_PARTY_BOTH_SIDES) चलाता है; स्थानीय-लेखन पक्ष Message-ID से डिडुप्लिकेट करता है (3 संदेश → 2 नए अनुरोध / 1 डुप्लिकेट), NDA → MSA → CONTRACT_REVIEW → DISPUTE → COMPLIANCE → OTHER क्रम में वर्गीकृत करता है, legal requests तालिका में पंक्तियाँ लिखता है और intake-ledger.xlsx निर्यात करता है (Requests शीट, 2 पंक्तियाँ)">
+</picture>
 
 ## तीन चरणों में शुरुआत
 
@@ -354,7 +359,7 @@ node samples/quickstart/run.mjs --check                  # गोल्ड फ�
 | `scripts/` | बिल्ड / सत्यापन / स्वीकृति स्क्रिप्ट और README एसेट जनरेटर |
 | `test/` | `node --test` (6 फ़ाइलें / 13 केस) |
 
-TypeScript सोर्स `src/` में और बिल्ड आउटपुट `lib/` में है। मौजूदा रेपो वर्ज़न `0.1.0` (`package.json` से मेल खाता है); `node --test test/*.test.mjs` हरा है (6 फ़ाइलें / 13 केस, 0 विफलता)। शुरुआती डायग्राम [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) से प्रोग्रामेटिक रूप से बनता है (Python; आउटपुट `docs/assets/dsh-legal-intake-flow-{light,dark}.svg`) और दोबारा चलाया जा सकता है।
+TypeScript सोर्स `src/` में और बिल्ड आउटपुट `lib/` में है। मौजूदा रेपो वर्ज़न `0.1.0` (`package.json` से मेल खाता है); `node --test test/*.test.mjs` हरा है (6 फ़ाइलें / 13 केस, 0 विफलता)। README की तस्वीरें [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) से प्रोग्रामेटिक रूप से बनती हैं — hero बैनर Pillow से (चार फ़ाइलें, zh/en × हल्का/गहरा) और संरचना-चित्र हाथ से लिखे SVG से (flow-v5 हल्का और गहरा) — और दोबारा चलाना सुरक्षित है; पुराना एक-संस्करण `dsh-legal-intake-flow-{light,dark}.svg` और टर्मिनल कैप्चर मौजूदा लिंक के लिए `docs/assets/` में रखे गए हैं, जबकि README केवल नई तस्वीरों का संदर्भ देते हैं।
 
 Topics: `deepseek-harness`, `dsh`, `dsh-plugin`, `legal`, `intake`, `contract`, `perrylink`, `eml`
 

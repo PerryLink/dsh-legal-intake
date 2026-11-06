@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-dark.svg">
-  <img src="docs/assets/dsh-legal-intake-flow-light.svg" width="100%" alt="Fluxo de dados do dsh-legal-intake: EML local + manifesto de anexos → legal.intake_doctor → legal.intake (análise, classificação, deduplicação por Message-ID) → legal.export_ledger → intake-ledger.xlsx; as solicitações ficam no domínio de armazenamento legal e as exportações em $DSH_HOME/storages/dsh-legal-intake/exports/, sem rede e sem chamada a modelo">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-hero-en-dark.webp">
+  <img src="docs/assets/dsh-legal-intake-hero-en-light.webp" width="100%" alt="Banner do dsh-legal-intake: a coluna esquerda traz o nome do plugin, o título «EML in, a ledger out» e duas linhas de valor; à direita, uma caixa de entrada somente leitura com 3 EML sintéticos, 1 reenvio barrado pela deduplicação por Message-ID e 2 registros no livro (req_455da4f6c27e, req_f07404d28828, planilha Requests), com os 4 códigos do doctor e o intake-ledger.xlsx exportado abaixo">
 </picture>
 
 # dsh-legal-intake
@@ -39,6 +39,11 @@ Recebe e-mails EML com solicitações jurídicas, deduplica por thread, classifi
 
 - **Serve para**: algumas dezenas de EML com solicitações jurídicas de clientes ou fornecedores que precisam ser deduplicados por Message-ID / thread e virar um registro que um colega possa revisar.
 - **Não serve para**: ler uma caixa de correio automaticamente ou emitir opiniões jurídicas e decisões de aprovação por você; o pacote lê apenas os arquivos que você entrega.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-v5-dark.svg">
+  <img src="docs/assets/dsh-legal-intake-flow-v5-light.svg" width="100%" alt="Estrutura do dsh-legal-intake: um lote de EML é analisado uma vez por parseEml() (Subject e From obrigatórios, senão E_LEGAL_EML_INVALID; sem Message-ID usa-se um hash do conteúdo e sem Thread-Id recorre-se ao Message-ID); depois divide-se em dois portões: o lado somente leitura executa legal.intake_doctor (4 códigos para estas 3 mensagens) e legal.conflict_check (nomes normalizados, lados opostos em conflicts, o mesmo nome nos dois lados como E_LEGAL_PARTY_BOTH_SIDES); o lado de escrita local deduplica por Message-ID (3 mensagens → 2 novos pedidos / 1 duplicado), classifica na ordem NDA → MSA → CONTRACT_REVIEW → DISPUTE → COMPLIANCE → OTHER, grava as linhas na tabela requests do domínio legal e exporta intake-ledger.xlsx (planilha Requests, 2 linhas)">
+</picture>
 
 ## Instalação em três passos
 
@@ -354,7 +359,7 @@ node samples/quickstart/run.mjs --check                  # comparar campo a camp
 | `scripts/` | Scripts de build / verificação / aceitação e o gerador de imagens do README |
 | `test/` | `node --test` (6 arquivos / 13 casos) |
 
-O código TypeScript fica em `src/` e a saída de build em `lib/`. Versão atual do repositório `0.1.0` (coincide com o `package.json`); `node --test test/*.test.mjs` passa (6 arquivos / 13 casos, 0 falhas). O diagrama de abertura é gerado programaticamente por [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) (Python; saída `docs/assets/dsh-legal-intake-flow-{light,dark}.svg`) e pode ser reexecutado sem problema.
+O código TypeScript fica em `src/` e a saída de build em `lib/`. Versão atual do repositório `0.1.0` (coincide com o `package.json`); `node --test test/*.test.mjs` passa (6 arquivos / 13 casos, 0 falhas). As imagens do README são geradas programaticamente por [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) — o banner hero com Pillow (quatro arquivos, zh/en × claro/escuro) e o diagrama de estrutura como SVG escrito à mão (flow-v5 claro e escuro) — e é seguro executar de novo; o antigo `dsh-legal-intake-flow-{light,dark}.svg` de versão única e as capturas de terminal ficam em `docs/assets/` para os links existentes, enquanto os READMEs referenciam apenas as imagens novas.
 
 Topics: `deepseek-harness`, `dsh`, `dsh-plugin`, `legal`, `intake`, `contract`, `perrylink`, `eml`
 

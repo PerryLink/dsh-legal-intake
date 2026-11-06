@@ -1,8 +1,8 @@
 <div align="center">
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-dark.svg">
-  <img src="docs/assets/dsh-legal-intake-flow-light.svg" width="100%" alt="dsh-legal-intake 数据流：本地 EML + 附件清单 → legal.intake_doctor → legal.intake（解析、分类、按 Message-ID 去重）→ legal.export_ledger → intake-ledger.xlsx；请求存 legal 存储域，导出在 $DSH_HOME/storages/dsh-legal-intake/exports/，不联网、不调用模型">
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-hero-zh-dark.webp">
+  <img src="docs/assets/dsh-legal-intake-hero-zh-light.webp" width="100%" alt="dsh-legal-intake 横幅：左列是插件名、标题「EML 进来，台账出去」与两行价值句；右侧是一批 3 封合成 EML 的收件区（只读），按 Message-ID 去重后 1 封重发被拦下，只有 2 封进入台账页（req_455da4f6c27e、req_f07404d28828，工作表 Requests），下方是 doctor 报出的 4 个错误码与导出的 intake-ledger.xlsx">
 </picture>
 
 # dsh-legal-intake
@@ -39,6 +39,11 @@ dsh plugin --profile <profile> add dsh-legal-intake
 
 - **适合**：几十封客户或供应商发来的 EML 法务需求，需要按 Message-ID / 线程去重，再整理成一份能交给同事复核的台账。
 - **不适合**：需要自动连邮箱收信、或需要替你做法律意见与审批结论的场景；本包只在本地读取你给出的文件。
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-v5-dark.svg">
+  <img src="docs/assets/dsh-legal-intake-flow-v5-light.svg" width="100%" alt="dsh-legal-intake 结构图：一批 EML 先经 parseEml() 解析（Subject / From 必填，缺则抛 E_LEGAL_EML_INVALID；缺 Message-ID 用内容哈希兜底，缺 Thread-Id 回退为 Message-ID），随后分成两道闸——R0 只读侧是 legal.intake_doctor（3 封报出 4 个错误码）与 legal.conflict_check（当事人名归一，同名异侧记 conflicts，同侧双角色报 E_LEGAL_PARTY_BOTH_SIDES）；R1 写入侧按 Message-ID 去重（3 封 → 2 条新需求 / 1 条重复）、按 NDA → MSA → CONTRACT_REVIEW → DISPUTE → COMPLIANCE → OTHER 顺序分类、写入 legal 域 requests 表并导出 intake-ledger.xlsx（工作表 Requests，2 行）">
+</picture>
 
 ## 三步上手
 
@@ -353,7 +358,7 @@ node samples/quickstart/run.mjs --check                  # 与金标逐字段比
 | `scripts/` | 构建 / 校验 / 验收脚本与 README 配图生成器 |
 | `test/` | `node --test`（6 个文件 / 13 个用例） |
 
-TypeScript 源码在 `src/`，构建产物在 `lib/`。当前仓库版本 `0.1.0`（与 `package.json` 一致）；`node --test test/*.test.mjs` 全绿（6 个文件 / 13 个用例，0 失败）。开头流程图由 [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) 程序化生成（Python，输出 `docs/assets/dsh-legal-intake-flow-{light,dark}.svg`），可重复执行。
+TypeScript 源码在 `src/`，构建产物在 `lib/`。当前仓库版本 `0.1.0`（与 `package.json` 一致）；`node --test test/*.test.mjs` 全绿（6 个文件 / 13 个用例，0 失败）。README 配图由 [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) 程序化生成——hero 横幅用 Pillow 画（`zh`/`en` × 深浅四版），结构图用手写 SVG 画（flow-v5 深浅双版）——可重复执行；旧的单版 `dsh-legal-intake-flow-{light,dark}.svg` 与终端截图保留在 `docs/assets/` 供外链使用，README 只引用新图。
 
 Topics：`deepseek-harness`, `dsh`, `dsh-plugin`, `legal`, `intake`, `contract`, `perrylink`, `eml`
 
