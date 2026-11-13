@@ -35,14 +35,14 @@ dsh plugin --profile <profile> add dsh-legal-intake
 
 ## यह क्या है
 
-कानूनी अनुरोधों वाले EML ईमेल लें, थ्रेड से डुप्लिकेट हटाएँ, अनुरोध का प्रकार तय करें और Excel लेजर निर्यात करें। प्लगइन केवल आपकी मशीन पर काम करता है: आप (या सत्र) EML टेक्स्ट और अनुलग्नक मैनिफ़ेस्ट `legal.intake` को देते हैं, जो हेडर पार्स करता है, `Message-ID` से डुप्लिकेट हटाता है, कीवर्ड से अनुरोध को `NDA` / `MSA` / `CONTRACT_REVIEW` / `DISPUTE` / `COMPLIANCE` / `OTHER` में बाँटता है और हर अनुरोध को स्थानीय `legal` स्टोरेज डोमेन में लिखता है; फिर `legal.export_ledger` उस तालिका को `$DSH_HOME/storages/dsh-legal-intake/exports/intake-ledger.xlsx` में निर्यात करता है। कोई मेलबॉक्स कनेक्शन नहीं, कोई नेटवर्क नहीं, कोई मॉडल कॉल नहीं, और मूल EML व मैनिफ़ेस्ट कभी नहीं बदले जाते।
+कानूनी अनुरोधों वाले EML ईमेल लें, थ्रेड से डुप्लिकेट हटाएँ, अनुरोध का प्रकार तय करें और Excel लेजर निर्यात करें। प्लगइन केवल आपकी मशीन पर काम करता है: आप (या सत्र) EML टेक्स्ट और अनुलग्नक मैनिफ़ेस्ट `legal_intake` को देते हैं, जो हेडर पार्स करता है, `Message-ID` से डुप्लिकेट हटाता है, कीवर्ड से अनुरोध को `NDA` / `MSA` / `CONTRACT_REVIEW` / `DISPUTE` / `COMPLIANCE` / `OTHER` में बाँटता है और हर अनुरोध को स्थानीय `legal` स्टोरेज डोमेन में लिखता है; फिर `legal_export_ledger` उस तालिका को `$DSH_HOME/storages/dsh-legal-intake/exports/intake-ledger.xlsx` में निर्यात करता है। कोई मेलबॉक्स कनेक्शन नहीं, कोई नेटवर्क नहीं, कोई मॉडल कॉल नहीं, और मूल EML व मैनिफ़ेस्ट कभी नहीं बदले जाते।
 
 - **उपयुक्त**: ग्राहकों या आपूर्तिकर्ताओं से आए कुछ दर्जन EML कानूनी अनुरोध, जिन्हें Message-ID / थ्रेड से डुप्लिकेट हटाकर ऐसे लेजर में बदलना है जिसे सहकर्मी समीक्षा कर सके।
 - **उपयुक्त नहीं**: मेलबॉक्स से अपने आप मेल पढ़ना, या आपके लिए कानूनी राय और अनुमोदन निर्णय देना; पैकेज केवल वही फ़ाइलें पढ़ता है जो आप देते हैं।
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-v5-dark.svg">
-  <img src="docs/assets/dsh-legal-intake-flow-v5-light.svg" width="100%" alt="dsh-legal-intake संरचना: EML का एक बैच पहले parseEml() से पढ़ा जाता है (Subject और From अनिवार्य, न हों तो E_LEGAL_EML_INVALID; Message-ID न हो तो सामग्री-हैश और Thread-Id न हो तो Message-ID पर वापसी); फिर दो गेट में बँटता है — केवल-पढ़ने वाला पक्ष legal.intake_doctor (इन 3 संदेशों के 4 कोड) और legal.conflict_check (पक्षकार नाम सामान्यीकृत, विपरीत पक्ष conflicts में, एक ही नाम दोनों पक्षों पर E_LEGAL_PARTY_BOTH_SIDES) चलाता है; स्थानीय-लेखन पक्ष Message-ID से डिडुप्लिकेट करता है (3 संदेश → 2 नए अनुरोध / 1 डुप्लिकेट), NDA → MSA → CONTRACT_REVIEW → DISPUTE → COMPLIANCE → OTHER क्रम में वर्गीकृत करता है, legal requests तालिका में पंक्तियाँ लिखता है और intake-ledger.xlsx निर्यात करता है (Requests शीट, 2 पंक्तियाँ)">
+  <img src="docs/assets/dsh-legal-intake-flow-v5-light.svg" width="100%" alt="dsh-legal-intake संरचना: EML का एक बैच पहले parseEml() से पढ़ा जाता है (Subject और From अनिवार्य, न हों तो E_LEGAL_EML_INVALID; Message-ID न हो तो सामग्री-हैश और Thread-Id न हो तो Message-ID पर वापसी); फिर दो गेट में बँटता है — केवल-पढ़ने वाला पक्ष legal_intake_doctor (इन 3 संदेशों के 4 कोड) और legal_conflict_check (पक्षकार नाम सामान्यीकृत, विपरीत पक्ष conflicts में, एक ही नाम दोनों पक्षों पर E_LEGAL_PARTY_BOTH_SIDES) चलाता है; स्थानीय-लेखन पक्ष Message-ID से डिडुप्लिकेट करता है (3 संदेश → 2 नए अनुरोध / 1 डुप्लिकेट), NDA → MSA → CONTRACT_REVIEW → DISPUTE → COMPLIANCE → OTHER क्रम में वर्गीकृत करता है, legal requests तालिका में पंक्तियाँ लिखता है और intake-ledger.xlsx निर्यात करता है (Requests शीट, 2 पंक्तियाँ)">
 </picture>
 
 ## तीन चरणों में शुरुआत
@@ -75,7 +75,7 @@ dsh plugin --profile <profile> add dsh-legal-intake
    node samples/quickstart/run.mjs
    ```
 
-   quickstart पैकेज के साथ आए तीन सिंथेटिक EML और एक अनुलग्नक मैनिफ़ेस्ट पढ़कर क्रम से `legal.intake_doctor → legal.intake → legal.export_ledger` कॉल करता है। सत्र में सीधे यह भी कह सकते हैं (`package.json` का डेमो प्रॉम्प्ट, `dsh.demo.prompt`):
+   quickstart पैकेज के साथ आए तीन सिंथेटिक EML और एक अनुलग्नक मैनिफ़ेस्ट पढ़कर क्रम से `legal_intake_doctor → legal_intake → legal_export_ledger` कॉल करता है। सत्र में सीधे यह भी कह सकते हैं (`package.json` का डेमो प्रॉम्प्ट, `dsh.demo.prompt`):
 
    > मेरे पास एक ग्राहक से आया कानूनी अनुरोध ईमेल और अनुलग्नक मैनिफ़ेस्ट है — थ्रेड से डुप्लिकेट हटाओ, अनुरोध का प्रकार बताओ और एक लेजर निर्यात करो।
 
@@ -104,11 +104,11 @@ ledger intake-ledger.xlsx: 2 rows
 
 ## मुख्य क्षमताएँ
 
-- **स्थानीय EML इनटेक** — `legal.intake` EML टेक्स्ट और अनुलग्नक मेटाडेटा का बैच लेता है, `Subject` / `From` / `Date` / `Message-ID` / `Thread-Id` पार्स करता है, `Message-ID` से डुप्लिकेट हटाता है और नए अनुरोध स्थानीय `legal` स्टोरेज डोमेन की `requests` तालिका में लिखता है; दोहराया गया ईमेल केवल डुप्लिकेट गिना जाता है और नई पंक्ति नहीं बनाता।
+- **स्थानीय EML इनटेक** — `legal_intake` EML टेक्स्ट और अनुलग्नक मेटाडेटा का बैच लेता है, `Subject` / `From` / `Date` / `Message-ID` / `Thread-Id` पार्स करता है, `Message-ID` से डुप्लिकेट हटाता है और नए अनुरोध स्थानीय `legal` स्टोरेज डोमेन की `requests` तालिका में लिखता है; दोहराया गया ईमेल केवल डुप्लिकेट गिना जाता है और नई पंक्ति नहीं बनाता।
 - **अनुरोध प्रकार का वर्गीकरण** — विषय और बॉडी के कीवर्ड से `NDA` / `MSA` / `CONTRACT_REVIEW` / `DISPUTE` / `COMPLIANCE` / `OTHER` में बाँटता है; पहला मेल जीतता है और बाकी `OTHER` में चले जाते हैं।
-- **इनटेक-पूर्व जाँच** — `legal.intake_doctor` बैच की केवल-पढ़ने वाली जाँच करता है: गुम हेडर, दोहराया `Message-ID`, दोहराया `Thread-Id`, एक जैसे या खाली अनुलग्नक नाम, और 0 बाइट अनुलग्नक; स्थिर एरर कोड लौटाता है, अपवाद नहीं फेंकता और कुछ स्टोर नहीं करता।
-- **पक्ष संघर्ष की पूर्व-जाँच** — `legal.conflict_check` पक्षों के नाम सामान्य करता है, नए मामले और मौजूदा मामलों के बीच एक ही पक्ष के विपरीत पक्षों पर होने की जाँच करता है और नए मामले में एक ही पक्ष के दोनों ओर होने की चेतावनी देता है; केवल-पढ़ने वाला, औपचारिक संघर्ष खोज का विकल्प नहीं।
-- **लेजर निर्यात** — `legal.export_ledger` `requests` तालिका को `intake-ledger.xlsx` (शीट `Requests`) में निर्यात करता है और पथ, पंक्ति संख्या व फ़ाइल का SHA-256 लौटाता है।
+- **इनटेक-पूर्व जाँच** — `legal_intake_doctor` बैच की केवल-पढ़ने वाली जाँच करता है: गुम हेडर, दोहराया `Message-ID`, दोहराया `Thread-Id`, एक जैसे या खाली अनुलग्नक नाम, और 0 बाइट अनुलग्नक; स्थिर एरर कोड लौटाता है, अपवाद नहीं फेंकता और कुछ स्टोर नहीं करता।
+- **पक्ष संघर्ष की पूर्व-जाँच** — `legal_conflict_check` पक्षों के नाम सामान्य करता है, नए मामले और मौजूदा मामलों के बीच एक ही पक्ष के विपरीत पक्षों पर होने की जाँच करता है और नए मामले में एक ही पक्ष के दोनों ओर होने की चेतावनी देता है; केवल-पढ़ने वाला, औपचारिक संघर्ष खोज का विकल्प नहीं।
+- **लेजर निर्यात** — `legal_export_ledger` `requests` तालिका को `intake-ledger.xlsx` (शीट `Requests`) में निर्यात करता है और पथ, पंक्ति संख्या व फ़ाइल का SHA-256 लौटाता है।
 - **पूरी तरह स्थानीय** — सोर्स में `fetch` / HTTP / DNS / WebSocket कॉल नहीं; मेलबॉक्स, OA या क्लाउड से नहीं जुड़ता और डेटा अपलोड नहीं करता।
 - **पढ़ने योग्य विफलताएँ** — हर त्रुटि `<सरल वाक्य> (E_LEGAL_…) | अगला कदम: <एक कार्य>` के रूप में है, इसलिए सीधे कार्रवाई कर सकते हैं।
 
@@ -118,10 +118,10 @@ ledger intake-ledger.xlsx: 2 rows
 
 | टूल | उद्देश्य | जोखिम |
 |---|---|---|
-| `legal.intake` | EML पार्स, अनुरोध वर्गीकृत, Message-ID से डुप्लिकेट हटाकर `requests` लिखता है; नए और डुप्लिकेट ids लौटाता है | R1 स्थानीय लेखन |
-| `legal.export_ledger` | `requests` को `Requests` शीट में निर्यात; पथ, पंक्तियाँ और SHA-256 लौटाता है | R1 स्थानीय लेखन |
-| `legal.intake_doctor` | इनटेक-पूर्व जाँच: गुम हेडर, दोहराए Message-ID / थ्रेड, एक जैसे / खाली / 0 बाइट अनुलग्नक | R0 केवल पढ़ना |
-| `legal.conflict_check` | नए और मौजूदा मामलों के बीच पक्ष संघर्ष की पूर्व-जाँच: सामान्य नाम, विपरीत पक्ष, दोनों ओर वाला पक्ष | R0 केवल पढ़ना |
+| `legal_intake` | EML पार्स, अनुरोध वर्गीकृत, Message-ID से डुप्लिकेट हटाकर `requests` लिखता है; नए और डुप्लिकेट ids लौटाता है | R1 स्थानीय लेखन |
+| `legal_export_ledger` | `requests` को `Requests` शीट में निर्यात; पथ, पंक्तियाँ और SHA-256 लौटाता है | R1 स्थानीय लेखन |
+| `legal_intake_doctor` | इनटेक-पूर्व जाँच: गुम हेडर, दोहराए Message-ID / थ्रेड, एक जैसे / खाली / 0 बाइट अनुलग्नक | R0 केवल पढ़ना |
+| `legal_conflict_check` | नए और मौजूदा मामलों के बीच पक्ष संघर्ष की पूर्व-जाँच: सामान्य नाम, विपरीत पक्ष, दोनों ओर वाला पक्ष | R0 केवल पढ़ना |
 
 ### इनपुट और आउटपुट
 
@@ -208,10 +208,10 @@ PS1-QS01,quickstart 样例与金标一致,1/1,1,true,synthetic/quickstart,true
 
 | पैरामीटर | डिफ़ॉल्ट | लागू | अर्थ |
 |---|---|---|---|
-| `messages[].eml_text` | आवश्यक | `legal.intake` / `legal.intake_doctor` | पूरा UTF-8 EML टेक्स्ट; `Subject` और `From` होने चाहिए |
-| `messages[].attachments[]` | `[]` | `legal.intake` / `legal.intake_doctor` | अनुलग्नक मेटाडेटा `name` / `sha256` / `size`; सामग्री नहीं पढ़ी जाती |
-| `new_parties[]` | आवश्यक | `legal.conflict_check` | नए मामले के पक्ष: `name` + `role` (`client` / `adverse`) |
-| `existing[]` | आवश्यक | `legal.conflict_check` | मौजूदा मामले: `matter_id` + `parties[]` (वही `name` / `role`) |
+| `messages[].eml_text` | आवश्यक | `legal_intake` / `legal_intake_doctor` | पूरा UTF-8 EML टेक्स्ट; `Subject` और `From` होने चाहिए |
+| `messages[].attachments[]` | `[]` | `legal_intake` / `legal_intake_doctor` | अनुलग्नक मेटाडेटा `name` / `sha256` / `size`; सामग्री नहीं पढ़ी जाती |
+| `new_parties[]` | आवश्यक | `legal_conflict_check` | नए मामले के पक्ष: `name` + `role` (`client` / `adverse`) |
+| `existing[]` | आवश्यक | `legal_conflict_check` | मौजूदा मामले: `matter_id` + `parties[]` (वही `name` / `role`) |
 
 <details>
 <summary>एरर कोड और समस्या निवारण</summary>
@@ -221,7 +221,7 @@ PS1-QS01,quickstart 样例与金标一致,1/1,1,true,synthetic/quickstart,true
 | कोड | कब आता है | अगला कदम |
 |---|---|---|
 | `E_LEGAL_EML_INVALID` | ईमेल में `Subject` या `From` नहीं (फेंका जाता है) | दोनों हेडर जोड़ें, या साथ आए नमूने से शुरू करें |
-| `E_LEGAL_LEDGER_FAILED` | लेजर नहीं लिखा जा सकता (`legal.export_ledger` फेंकता है) | निर्यात डायरेक्टरी लिखने योग्य हो, फिर दोबारा चलाएँ |
+| `E_LEGAL_LEDGER_FAILED` | लेजर नहीं लिखा जा सकता (`legal_export_ledger` फेंकता है) | निर्यात डायरेक्टरी लिखने योग्य हो, फिर दोबारा चलाएँ |
 | `E_LEGAL_MESSAGE_DUPLICATE` | जाँच में दोहराया `Message-ID` (दोबारा भेजा माना जाता है) | पुष्टि करें कि दोबारा भेजा है; नए अनुरोध के लिए नया ईमेल माँगें |
 | `E_LEGAL_THREAD_REPEATED` | दो अलग ईमेल एक ही `Thread-Id` इस्तेमाल करते हैं | थ्रेड आईडी जाँचें; असंबंधित श्रृंखलाओं को अलग आईडी चाहिए |
 | `E_LEGAL_ATTACHMENT_NAME_EMPTY` | मैनिफ़ेस्ट प्रविष्टि में फ़ाइल नाम नहीं | नाम जोड़ें या प्रविष्टि हटाएँ |
@@ -245,7 +245,7 @@ PS1-QS01,quickstart 样例与金标一致,1/1,1,true,synthetic/quickstart,true
 <details>
 <summary>एक ही ईमेल केवल एक बार क्यों दर्ज होता है?</summary>
 
-डुप्लिकेट हटाना `Message-ID` से होता है, इसलिए दोबारा भेजा गया ईमेल नया अनुरोध नहीं बल्कि डुप्लिकेट गिना जाता है; `legal.intake_doctor` दोहराए `Message-ID` और दोहराए `Thread-Id` की भी चेतावनी देता है। ध्यान दें: एक ही `Thread-Id` पर अलग `Message-ID` वाले दो ईमेल डुप्लिकेट नहीं माने जाते; जाँच केवल `E_LEGAL_THREAD_REPEATED` बताती है।
+डुप्लिकेट हटाना `Message-ID` से होता है, इसलिए दोबारा भेजा गया ईमेल नया अनुरोध नहीं बल्कि डुप्लिकेट गिना जाता है; `legal_intake_doctor` दोहराए `Message-ID` और दोहराए `Thread-Id` की भी चेतावनी देता है। ध्यान दें: एक ही `Thread-Id` पर अलग `Message-ID` वाले दो ईमेल डुप्लिकेट नहीं माने जाते; जाँच केवल `E_LEGAL_THREAD_REPEATED` बताती है।
 
 </details>
 
@@ -275,7 +275,7 @@ PS1-QS01,quickstart 样例与金标一致,1/1,1,true,synthetic/quickstart,true
 - **कोई नेटवर्क नहीं, कोई मॉडल कॉल नहीं।** सोर्स में `fetch` / HTTP / DNS / WebSocket कॉल नहीं हैं; `package.json` के डेमो मेटाडेटा में `network: false` घोषित है। इनपुट और आउटपुट स्थानीय रहते हैं।
 - **इनपुट केवल-पढ़ने योग्य।** टूल EML टेक्स्ट और मैनिफ़ेस्ट JSON लेते हैं, कोई अन्य डायरेक्टरी नहीं पढ़ते और मूल फ़ाइल कभी नहीं लिखते; अनुलग्नकों से केवल `name` / `sha256` / `size` मेटाडेटा उपयोग होता है।
 - **सीमित लेखन।** लेखन केवल `$DSH_LEGAL_HOME` (डिफ़ॉल्ट `$DSH_HOME/storages/dsh-legal-intake`) के `exports/` और स्थानीय `legal` स्टोरेज डोमेन की `requests` तालिका में होता है।
-- **डुप्लिकेट सुरक्षा।** यदि `requests` तालिका में `Message-ID` पहले से है, तो `legal.intake` उसे केवल डुप्लिकेट गिनता है — नई पंक्ति नहीं, ओवरराइट नहीं।
+- **डुप्लिकेट सुरक्षा।** यदि `requests` तालिका में `Message-ID` पहले से है, तो `legal_intake` उसे केवल डुप्लिकेट गिनता है — नई पंक्ति नहीं, ओवरराइट नहीं।
 - **ज़ोरदार विफलताएँ।** गुम हेडर और निर्यात विफलता कोड वाली त्रुटि फेंकते हैं; जाँच और संघर्ष पूर्व-जाँच चुपचाप छोड़ने के बजाय स्थिर कोड लौटाती हैं।
 - **कोई छिपी सतह नहीं।** मेलबॉक्स / OA / क्लाउड कनेक्शन नहीं, और कोई कमांड, क्लाइंट slot, `webServer` रूट या सर्विस कुंजी पंजीकृत नहीं; होस्ट केवल `tools` और `storageDomain` माउंट करता है, R2/R3 टूल नहीं।
 
@@ -304,7 +304,7 @@ PS1-QS01,quickstart 样例与金标一致,1/1,1,true,synthetic/quickstart,true
 
 ## अन्य DSH प्लगइन के साथ अंतर-संचालन
 
-- **नेमस्पेस वाले टूल नाम।** सभी टूल `legal.*` के नीचे हैं और अंतर्निहित टूल या अन्य प्लगइन के सादे नाम नहीं लेते।
+- **नेमस्पेस वाले टूल नाम।** सभी टूल `legal_*` के नीचे हैं और अंतर्निहित टूल या अन्य प्लगइन के सादे नाम नहीं लेते।
 - **होस्ट सतह नहीं छीनता।** कोई कमांड, क्लाइंट slot, `webServer` रूट या सर्विस कुंजी पंजीकृत नहीं करता; केवल `tools` और `storageDomain` होस्ट सर्विस इंजेक्ट करता है।
 - **स्वतंत्र स्टोरेज डोमेन।** केवल एक डोमेन, `legal` (version 1) उपयोग करता है; बंद होना Cordis effect है, इसलिए रोकने या हॉट-रीलोड पर हट जाता है।
 - **पूरक ज़िम्मेदारियाँ।** क्लॉज़ समीक्षा [`dsh-legal-clause`](https://github.com/PerryLink/dsh-legal-clause) और पूरा अनुबंध प्रवाह [`dsh-contract-suite`](https://github.com/PerryLink/dsh-contract-suite) देखता है; क्लॉज़ रुख और प्रमाण सूचियाँ [`dsh-contract-stance`](https://github.com/PerryLink/dsh-contract-stance) और [`dsh-evidence-check`](https://github.com/PerryLink/dsh-evidence-check) देखते हैं। हर एक अलग पैकेज है, ज़रूरत पर ही इंस्टॉल करें।
@@ -342,7 +342,7 @@ PS1-QS01,quickstart 样例与金标一致,1/1,1,true,synthetic/quickstart,true
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm build && pnpm lint && pnpm typecheck && pnpm test   # tsc build + node --test (6 फ़ाइलें / 13 केस)
+pnpm build && pnpm lint && pnpm typecheck && pnpm test   # tsc build + node --test (7 फ़ाइलें / 14 केस)
 pnpm gate:sku09                                          # स्वीकृति गेट (ACCEPTANCE.csv)
 node scripts/acceptance.mjs                              # सार्वजनिक/सिंथेटिक स्वीकृति दोबारा चलाएँ
 node samples/quickstart/run.mjs                          # सिंथेटिक नमूने का सारांश
@@ -357,9 +357,9 @@ node samples/quickstart/run.mjs --check                  # गोल्ड फ�
 | `samples/quickstart/` | साथ आया सिंथेटिक नमूना + गोल्ड फ़ाइल `expected/result.json` |
 | `fixtures/` | केवल रेपो में रहने वाले सार्वजनिक fixtures (MIT NDA नमूना; npm tarball में नहीं) |
 | `scripts/` | बिल्ड / सत्यापन / स्वीकृति स्क्रिप्ट और README एसेट जनरेटर |
-| `test/` | `node --test` (6 फ़ाइलें / 13 केस) |
+| `test/` | `node --test` (7 फ़ाइलें / 14 केस) |
 
-TypeScript सोर्स `src/` में और बिल्ड आउटपुट `lib/` में है। मौजूदा रेपो वर्ज़न `0.1.0` (`package.json` से मेल खाता है); `node --test test/*.test.mjs` हरा है (6 फ़ाइलें / 13 केस, 0 विफलता)। README की तस्वीरें [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) से प्रोग्रामेटिक रूप से बनती हैं — hero बैनर Pillow से (चार फ़ाइलें, zh/en × हल्का/गहरा) और संरचना-चित्र हाथ से लिखे SVG से (flow-v5 हल्का और गहरा) — और दोबारा चलाना सुरक्षित है; पुराना एक-संस्करण `dsh-legal-intake-flow-{light,dark}.svg` और टर्मिनल कैप्चर मौजूदा लिंक के लिए `docs/assets/` में रखे गए हैं, जबकि README केवल नई तस्वीरों का संदर्भ देते हैं।
+TypeScript सोर्स `src/` में और बिल्ड आउटपुट `lib/` में है। मौजूदा रेपो वर्ज़न `0.2.0` (`package.json` से मेल खाता है); `node --test test/*.test.mjs` हरा है (7 फ़ाइलें / 14 केस, 0 विफलता)। README की तस्वीरें [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) से प्रोग्रामेटिक रूप से बनती हैं — hero बैनर Pillow से (चार फ़ाइलें, zh/en × हल्का/गहरा) और संरचना-चित्र हाथ से लिखे SVG से (flow-v5 हल्का और गहरा) — और दोबारा चलाना सुरक्षित है; पुराना एक-संस्करण `dsh-legal-intake-flow-{light,dark}.svg` और टर्मिनल कैप्चर मौजूदा लिंक के लिए `docs/assets/` में रखे गए हैं, जबकि README केवल नई तस्वीरों का संदर्भ देते हैं।
 
 Topics: `deepseek-harness`, `dsh`, `dsh-plugin`, `legal`, `intake`, `contract`, `perrylink`, `eml`
 

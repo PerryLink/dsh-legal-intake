@@ -10,17 +10,17 @@
 <path d="M235 186h30" stroke="#8b949e" stroke-width="3"/>
 <path d="M263 179l10 7-10 7" fill="none" stroke="#8b949e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 <rect x="273" y="140" width="190" height="92" rx="14" fill="#161b22" stroke="#30363d" stroke-width="2"/>
-<text x="368" y="178" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace,monospace" font-size="15" font-weight="700">legal.intake_doctor</text>
+<text x="368" y="178" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace,monospace" font-size="15" font-weight="700">legal_intake_doctor</text>
 <text x="368" y="206" fill="#8b949e" text-anchor="middle" font-family="ui-monospace,monospace" font-size="11.5">R0 · E_LEGAL_*</text>
 <path d="M467 186h30" stroke="#8b949e" stroke-width="3"/>
 <path d="M495 179l10 7-10 7" fill="none" stroke="#8b949e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 <rect x="505" y="140" width="190" height="92" rx="14" fill="#161b22" stroke="#4B67B4" stroke-width="2"/>
-<text x="600" y="178" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace,monospace" font-size="15" font-weight="700">legal.intake</text>
+<text x="600" y="178" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace,monospace" font-size="15" font-weight="700">legal_intake</text>
 <text x="600" y="206" fill="#8b949e" text-anchor="middle" font-family="ui-monospace,monospace" font-size="11.5">parse · classify · dedupe</text>
 <path d="M699 186h30" stroke="#8b949e" stroke-width="3"/>
 <path d="M727 179l10 7-10 7" fill="none" stroke="#8b949e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
 <rect x="737" y="140" width="190" height="92" rx="14" fill="#161b22" stroke="#4B67B4" stroke-width="2"/>
-<text x="832" y="178" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace,monospace" font-size="15" font-weight="700">legal.export_ledger</text>
+<text x="832" y="178" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace,monospace" font-size="15" font-weight="700">legal_export_ledger</text>
 <text x="832" y="206" fill="#8b949e" text-anchor="middle" font-family="ui-monospace,monospace" font-size="11.5">R1 · xlsx · exports/</text>
 <path d="M931 186h30" stroke="#8b949e" stroke-width="3"/>
 <path d="M959 179l10 7-10 7" fill="none" stroke="#8b949e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -31,5 +31,5 @@
 <path d="M832 232v51" stroke="#4B67B4" stroke-width="2" stroke-dasharray="5 5"/>
 <rect x="60" y="283" width="1080" height="54" rx="12" fill="#161b22" stroke="#4B67B4" stroke-width="2"/>
 <text x="600" y="317" fill="#f0f6fc" text-anchor="middle" font-family="ui-monospace,monospace" font-size="13">legal domain v1 · requests · dedupe by Message-ID · $DSH_HOME/storages/dsh-legal-intake · no network</text>
-<text x="60" y="418" fill="#8b949e" font-family="ui-monospace,monospace" font-size="12.5">R0 legal.intake_doctor · legal.conflict_check | R1 legal.intake · legal.export_ledger | no network · no model call</text>
+<text x="60" y="418" fill="#8b949e" font-family="ui-monospace,monospace" font-size="12.5">R0 legal_intake_doctor · legal_conflict_check | R1 legal_intake · legal_export_ledger | no network · no model call</text>
 </svg>

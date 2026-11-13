@@ -47,9 +47,9 @@ async function run() {
     const tools = Object.fromEntries(createTools({ requests: new MemoryTable(), baseDir }).map((tool) => [tool.name, tool]))
     const call = (name, args) => tools[name].execute(args, { callId: 'quickstart' })
 
-    const doctor = await call('legal.intake_doctor', { messages })
-    const intake = await call('legal.intake', { messages })
-    const ledger = await call('legal.export_ledger', {})
+    const doctor = await call('legal_intake_doctor', { messages })
+    const intake = await call('legal_intake', { messages })
+    const ledger = await call('legal_export_ledger', {})
 
     return {
       sample: 'samples/quickstart/input',

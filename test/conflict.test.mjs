@@ -7,7 +7,7 @@ const tools = Object.fromEntries(createTools({ requests: new T(), baseDir: '/tmp
 const exec = { callId: 'conflict' }
 
 test('a party adverse in an existing matter conflicts with a new client', async () => {
-  const r = await tools['legal.conflict_check'].execute({
+  const r = await tools['legal_conflict_check'].execute({
     new_parties: [{ name: 'Acme  Trading', role: 'client' }],
     existing: [{ matter_id: 'M-1', parties: [{ name: 'acme trading', role: 'adverse' }] }],
   }, exec)
@@ -17,7 +17,7 @@ test('a party adverse in an existing matter conflicts with a new client', async 
 })
 
 test('the same side is not a conflict', async () => {
-  const r = await tools['legal.conflict_check'].execute({
+  const r = await tools['legal_conflict_check'].execute({
     new_parties: [{ name: 'Acme', role: 'client' }],
     existing: [{ matter_id: 'M-2', parties: [{ name: 'ACME', role: 'client' }] }],
   }, exec)
@@ -25,7 +25,7 @@ test('the same side is not a conflict', async () => {
 })
 
 test('a party listed on both sides of the new matter is an issue', async () => {
-  const r = await tools['legal.conflict_check'].execute({
+  const r = await tools['legal_conflict_check'].execute({
     new_parties: [{ name: 'Beta Ltd', role: 'client' }, { name: 'Beta Ltd', role: 'adverse' }],
     existing: [],
   }, exec)
@@ -33,7 +33,7 @@ test('a party listed on both sides of the new matter is an issue', async () => {
 })
 
 test('unrelated existing matters produce no conflicts', async () => {
-  const r = await tools['legal.conflict_check'].execute({
+  const r = await tools['legal_conflict_check'].execute({
     new_parties: [{ name: 'Gamma', role: 'adverse' }],
     existing: [{ matter_id: 'M-3', parties: [{ name: 'Delta', role: 'client' }] }],
   }, exec)

@@ -13,13 +13,13 @@
 
 - **症状**：`这封邮件的 Message-ID 和前面某一封完全相同，会被当成重发（E_LEGAL_MESSAGE_DUPLICATE）｜下一步：确认是不是重发；如果是新需求，请让发件人换一封新邮件`
 - **原因**：重发邮件保留了原 `Message-ID`；或者两封不同邮件误用了同一个 `Thread-Id`。
-- **动作**：重发就保留现状（入库只算一次）；新需求请让发件人新建邮件。重复 `Thread-Id` 时改成各自的线程号再跑 `legal.intake_doctor`。
+- **动作**：重发就保留现状（入库只算一次）；新需求请让发件人新建邮件。重复 `Thread-Id` 时改成各自的线程号再跑 `legal_intake_doctor`。
 
 ## 3. 附件清单对不上（E_LEGAL_ATTACHMENT_DUPLICATE / E_LEGAL_ATTACHMENT_EMPTY）
 
 - **症状**：`同一封邮件里有两个同名附件，导入后只认得出名字（E_LEGAL_ATTACHMENT_DUPLICATE）｜下一步：把重名附件改成不同的文件名，或删掉重复的那一条`
 - **原因**：附件清单重复列了同一个文件名，或有一条 `size: 0` 的空附件（常见于没上传成功的扫描件）。
-- **动作**：把重名附件改成不同文件名；0 字节附件重新上传或从清单删掉，再重跑 `legal.intake`。
+- **动作**：把重名附件改成不同文件名；0 字节附件重新上传或从清单删掉，再重跑 `legal_intake`。
 
 ## Install or activation fails
 

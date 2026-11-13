@@ -14,14 +14,14 @@ invented:
     (fallback `mid-<djb2 hash>`), Thread-Id (fallback = Message-ID);
     `classify()` tests a fixed keyword order NDA -> MSA -> CONTRACT_REVIEW ->
     DISPUTE -> COMPLIANCE -> OTHER and stops at the first hit.
-  * `src/plugin/tools.ts` - `legal.intake` seeds its seen-set from the stored
+  * `src/plugin/tools.ts` - `legal_intake` seeds its seen-set from the stored
     `requests` table, dedupes by Message-ID (`duplicates[]`, no new row),
     derives `request_id = req_ + sha256(message_id)[:12]`, writes a record
-    with status `new`; `legal.intake_doctor` is read-only and returns stable
+    with status `new`; `legal_intake_doctor` is read-only and returns stable
     codes (`E_LEGAL_MESSAGE_DUPLICATE`, `E_LEGAL_THREAD_REPEATED`,
     `E_LEGAL_ATTACHMENT_DUPLICATE`, `E_LEGAL_ATTACHMENT_EMPTY`);
-    `legal.export_ledger` writes `exports/intake-ledger.xlsx`, sheet
-    `Requests`; `legal.conflict_check` normalises party names and reports
+    `legal_export_ledger` writes `exports/intake-ledger.xlsx`, sheet
+    `Requests`; `legal_conflict_check` normalises party names and reports
     `opposing_sides` plus `E_LEGAL_PARTY_BOTH_SIDES`.
   * `src/plugin/storage.ts` - `legal` domain v1, one `requests` table, ten
     record fields, status `new` | `triaged`.
@@ -40,8 +40,8 @@ It is the same batch at two distances: what came in, and what was written out.
 Flow - grammar = SPLIT GATE (dual channel) + SIEVE + ORDERED CLASSIFIER
 STAIRCASE, not a row of nodes. Band 01 is the shared input batch and the one
 `parseEml()` result (with both fallbacks). A fork feeds two gates: 02, the
-read-only side that holds `legal.intake_doctor` (the four codes this sample
-really raises) and `legal.conflict_check` (a separate parties input, marked as
+read-only side that holds `legal_intake_doctor` (the four codes this sample
+really raises) and `legal_conflict_check` (a separate parties input, marked as
 such); 03, the local-write side that dedupes against `seen(Message-ID)`,
 classifies through the six ordered types, stores two records in
 `legal.requests`, and exports `intake-ledger.xlsx`. The footer keeps the
@@ -321,8 +321,8 @@ COPY = {
                 "台账写成 xlsx，原件一字不改。"],
         subs=["入库前体检：缺头、重发、同名与空附件都有错误码。",
               "不连邮箱、不联网、不调用模型，结果只留在本机。"],
-        meta=["legal.intake · legal.export_ledger · R1",
-              "legal.intake_doctor · legal.conflict_check · R0"],
+        meta=["legal_intake · legal_export_ledger · R1",
+              "legal_intake_doctor · legal_conflict_check · R0"],
         footer="原件只读 · Apache-2.0 · PerryLink DSH plugin family",
         title_ys=[172, 272],
         value_ys=[340, 378],
@@ -339,8 +339,8 @@ COPY = {
                 "One xlsx out; the original is never edited."],
         subs=["Read-only doctor flags resends and bad attachments.",
               "Results stay on this machine; nothing is uploaded."],
-        meta=["legal.intake · legal.export_ledger · R1",
-              "legal.intake_doctor · legal.conflict_check · R0"],
+        meta=["legal_intake · legal_export_ledger · R1",
+              "legal_intake_doctor · legal_conflict_check · R0"],
         footer="Local files only · original read-only · Apache-2.0",
         title_ys=[168, 268],
         value_ys=[336, 374],
@@ -610,18 +610,18 @@ def flow_svg(skin: str) -> str:
         "result: Subject and From are required, Date is optional, a missing "
         "Message-ID falls back to mid-<content hash> and a missing Thread-Id "
         "falls back to the Message-ID. A fork then feeds two gates. Gate 02 "
-        "is read-only and never throws: legal.intake_doctor reports four "
+        "is read-only and never throws: legal_intake_doctor reports four "
         "codes for this sample (E_LEGAL_MESSAGE_DUPLICATE, "
         "E_LEGAL_THREAD_REPEATED, E_LEGAL_ATTACHMENT_DUPLICATE, "
-        "E_LEGAL_ATTACHMENT_EMPTY); legal.conflict_check takes a separate "
+        "E_LEGAL_ATTACHMENT_EMPTY); legal_conflict_check takes a separate "
         "parties input, normalises names and reports opposing sides. Gate 03 "
-        "is the local write path: legal.intake dedupes against seen "
+        "is the local write path: legal_intake dedupes against seen "
         "Message-IDs (3 messages become 2 new requests and 1 duplicate that "
         "is counted but not stored), classifies in the fixed order NDA, MSA, "
         "CONTRACT_REVIEW, DISPUTE, COMPLIANCE, OTHER (this sample: NDA 1, MSA "
         "1), stores two records in the legal domain requests table "
         "(request_id = req_ + sha256(Message-ID)[:12], status new), and "
-        "legal.export_ledger writes exports/intake-ledger.xlsx with sheet "
+        "legal_export_ledger writes exports/intake-ledger.xlsx with sheet "
         "Requests and 2 rows. The footer keeps the boundary visible: the "
         "source is read-only, there is no network and no model call, and "
         "writes go only to exports/ and legal.requests."
@@ -750,7 +750,7 @@ def flow_svg(skin: str) -> str:
                    "sans", 400, "end"))
     parts.append(line(60, 356, 508, 356, s["rule"], 1))
 
-    parts.append(t(60, 376, "legal.intake_doctor", 13, s["text"], "mono", 700))
+    parts.append(t(60, 376, "legal_intake_doctor", 13, s["text"], "mono", 700))
     parts.append(t(508, 376, "3 messages → 4 issues", 11.5, accent, "mono",
                    700, "end"))
     doctor = [
@@ -769,7 +769,7 @@ def flow_svg(skin: str) -> str:
         parts.append(t(508, y, reason, 11.5, s["faint"], "sans", 400, "end"))
 
     parts.append(line(60, 476, 508, 476, s["rule"], 1))
-    parts.append(t(60, 492, "legal.conflict_check", 13, s["text"], "mono",
+    parts.append(t(60, 492, "legal_conflict_check", 13, s["text"], "mono",
                    700))
     parts.append(t(508, 492, "separate parties input · R0", 11, s["faint"],
                    "sans", 400, "end"))
@@ -791,7 +791,7 @@ def flow_svg(skin: str) -> str:
     parts.append(t(564, 344, "03", 12, accent, "mono", 700))
     parts.append(t(590, 344, "R1 · LOCAL WRITE", 13, accent, "sans", 700,
                    tracking=0.6))
-    parts.append(t(1040, 344, "legal.intake → legal.export_ledger", 11,
+    parts.append(t(1040, 344, "legal_intake → legal_export_ledger", 11,
                    s["faint"], "sans", 400, "end"))
     parts.append(line(564, 356, 1040, 356, s["rule"], 1))
 
@@ -864,13 +864,13 @@ def flow_svg(skin: str) -> str:
         lw = measure(label, 11.5, "cjk_bold")
         parts.append(t(fx + 14 + lw + 6, 606, detail, 11, s["faint"], "sans"))
 
-    tools_line = ("R0 legal.intake_doctor · legal.conflict_check      "
-                  "R1 legal.intake · legal.export_ledger")
+    tools_line = ("R0 legal_intake_doctor · legal_conflict_check      "
+                  "R1 legal_intake · legal_export_ledger")
     require_svg(tools_line, 11, "mono", 700, "footer tools")
     parts.append(t(44, 630, tools_line, 11, s["faint"], "mono"))
     parts.append(t(1056, 630, "request_id = req_ + sha256(Message-ID)[:12]",
                    11, s["faint"], "mono", 400, "end"))
-    parts.append(t(44, 650, "0.1.0 · Apache-2.0 · synthetic sample only",
+    parts.append(t(44, 650, "0.2.0 · Apache-2.0 · synthetic sample only",
                    11, s["faint"], "sans"))
     parts.append(t(1056, 650,
                    "samples/quickstart/expected/result.json · 3 EML → "
