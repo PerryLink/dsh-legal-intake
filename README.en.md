@@ -35,14 +35,14 @@ dsh plugin --profile <profile> add dsh-legal-intake
 
 ## What it is
 
-Collect legal-request EML emails, deduplicate by thread, classify the request type, and export an Excel ledger. The plugin works only on your machine: you (or the session) hand EML text plus an attachment manifest to `legal.intake`, which parses the headers, deduplicates by `Message-ID`, classifies the request into `NDA` / `MSA` / `CONTRACT_REVIEW` / `DISPUTE` / `COMPLIANCE` / `OTHER` with keywords, and writes each request into the local `legal` storage domain; `legal.export_ledger` then exports that table to `$DSH_HOME/storages/dsh-legal-intake/exports/intake-ledger.xlsx`. No mailbox connection, no network, no model call, and the original EML and attachment manifest are never modified.
+Collect legal-request EML emails, deduplicate by thread, classify the request type, and export an Excel ledger. The plugin works only on your machine: you (or the session) hand EML text plus an attachment manifest to `legal_intake`, which parses the headers, deduplicates by `Message-ID`, classifies the request into `NDA` / `MSA` / `CONTRACT_REVIEW` / `DISPUTE` / `COMPLIANCE` / `OTHER` with keywords, and writes each request into the local `legal` storage domain; `legal_export_ledger` then exports that table to `$DSH_HOME/storages/dsh-legal-intake/exports/intake-ledger.xlsx`. No mailbox connection, no network, no model call, and the original EML and attachment manifest are never modified.
 
 - **Good fit**: a few dozen EML legal requests from clients or suppliers that must be deduplicated by Message-ID / thread and turned into a ledger a colleague can review.
 - **Not a fit**: automatically reading a mailbox, or producing legal opinions and approval decisions for you; the package only reads the files you hand it.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-v5-dark.svg">
-  <img src="docs/assets/dsh-legal-intake-flow-v5-light.svg" width="100%" alt="dsh-legal-intake structure: a batch of EML is parsed once by parseEml() (Subject and From required, otherwise E_LEGAL_EML_INVALID; a missing Message-ID falls back to a content hash, a missing Thread-Id to the Message-ID), then forks into two gates — the read-only side runs legal.intake_doctor (4 codes for these 3 messages) and legal.conflict_check (normalised party names, opposite sides recorded as conflicts, one name on both sides reported as E_LEGAL_PARTY_BOTH_SIDES); the local-write side dedupes by Message-ID (3 messages → 2 new requests / 1 duplicate), classifies in the fixed NDA → MSA → CONTRACT_REVIEW → DISPUTE → COMPLIANCE → OTHER order, stores rows in the legal requests table and exports intake-ledger.xlsx (sheet Requests, 2 rows)">
+  <img src="docs/assets/dsh-legal-intake-flow-v5-light.svg" width="100%" alt="dsh-legal-intake structure: a batch of EML is parsed once by parseEml() (Subject and From required, otherwise E_LEGAL_EML_INVALID; a missing Message-ID falls back to a content hash, a missing Thread-Id to the Message-ID), then forks into two gates — the read-only side runs legal_intake_doctor (4 codes for these 3 messages) and legal_conflict_check (normalised party names, opposite sides recorded as conflicts, one name on both sides reported as E_LEGAL_PARTY_BOTH_SIDES); the local-write side dedupes by Message-ID (3 messages → 2 new requests / 1 duplicate), classifies in the fixed NDA → MSA → CONTRACT_REVIEW → DISPUTE → COMPLIANCE → OTHER order, stores rows in the legal requests table and exports intake-ledger.xlsx (sheet Requests, 2 rows)">
 </picture>
 
 ## Three-step setup
@@ -75,7 +75,7 @@ Collect legal-request EML emails, deduplicate by thread, classify the request ty
    node samples/quickstart/run.mjs
    ```
 
-   The quickstart reads the three synthetic EMLs and one attachment manifest shipped with the package and calls `legal.intake_doctor → legal.intake → legal.export_ledger` in order. Inside a session you can also just ask — this is a translation of the demo prompt shipped in `package.json` as `dsh.demo.prompt`:
+   The quickstart reads the three synthetic EMLs and one attachment manifest shipped with the package and calls `legal_intake_doctor → legal_intake → legal_export_ledger` in order. Inside a session you can also just ask — this is a translation of the demo prompt shipped in `package.json` as `dsh.demo.prompt`:
 
    > I have a legal-request email from a client plus the attachment manifest — deduplicate by thread, classify the request type, and export a ledger.
 
@@ -104,11 +104,11 @@ Every PerryLink plugin is listed in the built-in DSH Desktop market: **Market �
 
 ## Core capabilities
 
-- **Local EML intake** — `legal.intake` takes a batch of EML texts plus attachment metadata, parses `Subject` / `From` / `Date` / `Message-ID` / `Thread-Id`, deduplicates by `Message-ID`, and writes new requests into the `requests` table of the local `legal` storage domain; a duplicate email is only counted as a duplicate and creates no new row.
+- **Local EML intake** — `legal_intake` takes a batch of EML texts plus attachment metadata, parses `Subject` / `From` / `Date` / `Message-ID` / `Thread-Id`, deduplicates by `Message-ID`, and writes new requests into the `requests` table of the local `legal` storage domain; a duplicate email is only counted as a duplicate and creates no new row.
 - **Request-type classification** — classifies by keywords in the subject and body into `NDA` / `MSA` / `CONTRACT_REVIEW` / `DISPUTE` / `COMPLIANCE` / `OTHER`; first match wins and anything unmatched becomes `OTHER`.
-- **Pre-intake QA** — `legal.intake_doctor` checks a batch read-only for missing headers, duplicate `Message-ID`, repeated `Thread-Id`, duplicate / empty attachment names, and zero-byte attachments, reporting stable error codes without throwing or storing anything.
-- **Party conflict pre-check** — `legal.conflict_check` normalizes party names, checks whether the same party sits on opposing sides between a new matter and existing matters, and flags a party listed on both sides of the new matter; read-only, and not a substitute for a formal conflicts search.
-- **Ledger export** — `legal.export_ledger` exports the `requests` table to `intake-ledger.xlsx` (sheet `Requests`) and returns the path, row count, and file SHA-256.
+- **Pre-intake QA** — `legal_intake_doctor` checks a batch read-only for missing headers, duplicate `Message-ID`, repeated `Thread-Id`, duplicate / empty attachment names, and zero-byte attachments, reporting stable error codes without throwing or storing anything.
+- **Party conflict pre-check** — `legal_conflict_check` normalizes party names, checks whether the same party sits on opposing sides between a new matter and existing matters, and flags a party listed on both sides of the new matter; read-only, and not a substitute for a formal conflicts search.
+- **Ledger export** — `legal_export_ledger` exports the `requests` table to `intake-ledger.xlsx` (sheet `Requests`) and returns the path, row count, and file SHA-256.
 - **Purely local** — no `fetch` / HTTP / DNS / WebSocket calls in the source; no mailbox, OA or cloud connection, no upload.
 - **Readable failures** — every error is `<plain-language sentence> (E_LEGAL_…) | next step: <one action>`, so you can act on it directly.
 
@@ -118,10 +118,10 @@ Tool names are a stable API (matched to runtime output, kept in English); descri
 
 | Tool | Purpose | Risk |
 |---|---|---|
-| `legal.intake` | Parse EML, classify the request, dedupe by Message-ID and write `requests`; returns new-request ids and duplicate ids | R1 local write |
-| `legal.export_ledger` | Export `requests` as the `Requests` sheet; returns path, rows and SHA-256 | R1 local write |
-| `legal.intake_doctor` | Pre-intake QA: missing headers, duplicate Message-ID / thread, duplicate / empty / zero-byte attachments | R0 read-only |
-| `legal.conflict_check` | Party conflict pre-check between a new matter and existing matters: normalized names, opposing sides, both-sides party | R0 read-only |
+| `legal_intake` | Parse EML, classify the request, dedupe by Message-ID and write `requests`; returns new-request ids and duplicate ids | R1 local write |
+| `legal_export_ledger` | Export `requests` as the `Requests` sheet; returns path, rows and SHA-256 | R1 local write |
+| `legal_intake_doctor` | Pre-intake QA: missing headers, duplicate Message-ID / thread, duplicate / empty / zero-byte attachments | R0 read-only |
+| `legal_conflict_check` | Party conflict pre-check between a new matter and existing matters: normalized names, opposing sides, both-sides party | R0 read-only |
 
 ### Input and output
 
@@ -208,10 +208,10 @@ The most-used tool arguments:
 
 | Parameter | Default | Applies to | Meaning |
 |---|---|---|---|
-| `messages[].eml_text` | required | `legal.intake` / `legal.intake_doctor` | Full UTF-8 EML text; must contain `Subject` and `From` |
-| `messages[].attachments[]` | `[]` | `legal.intake` / `legal.intake_doctor` | Attachment metadata `name` / `sha256` / `size`; contents are not read |
-| `new_parties[]` | required | `legal.conflict_check` | New-matter parties: `name` + `role` (`client` / `adverse`) |
-| `existing[]` | required | `legal.conflict_check` | Existing matters: `matter_id` + `parties[]` (also `name` / `role`) |
+| `messages[].eml_text` | required | `legal_intake` / `legal_intake_doctor` | Full UTF-8 EML text; must contain `Subject` and `From` |
+| `messages[].attachments[]` | `[]` | `legal_intake` / `legal_intake_doctor` | Attachment metadata `name` / `sha256` / `size`; contents are not read |
+| `new_parties[]` | required | `legal_conflict_check` | New-matter parties: `name` + `role` (`client` / `adverse`) |
+| `existing[]` | required | `legal_conflict_check` | Existing matters: `matter_id` + `parties[]` (also `name` / `role`) |
 
 <details>
 <summary>Error codes and troubleshooting</summary>
@@ -221,7 +221,7 @@ Every error reads `<plain-language sentence> (E_LEGAL_…) | next step: <one act
 | Code | When it appears | Next step |
 |---|---|---|
 | `E_LEGAL_EML_INVALID` | The email lacks `Subject` or `From` (thrown) | Add both headers, or start with the shipped sample |
-| `E_LEGAL_LEDGER_FAILED` | The ledger cannot be written (`legal.export_ledger` throws) | Check that the export directory is writable, then re-run the export |
+| `E_LEGAL_LEDGER_FAILED` | The ledger cannot be written (`legal_export_ledger` throws) | Check that the export directory is writable, then re-run the export |
 | `E_LEGAL_MESSAGE_DUPLICATE` | QA finds a duplicate `Message-ID` (treated as a resend) | Confirm it is a resend; for a new request ask the sender for a new email |
 | `E_LEGAL_THREAD_REPEATED` | QA finds two different emails sharing one `Thread-Id` | Check the thread id; unrelated email chains need their own ids |
 | `E_LEGAL_ATTACHMENT_NAME_EMPTY` | A manifest entry has no file name | Add the name, or delete the entry |
@@ -245,7 +245,7 @@ Check DSH `>=0.2.1-rc.3 <0.4.0` and Node `>=24.9 <25`, then retry with a fresh `
 <details>
 <summary>Why does the same email enter only once?</summary>
 
-Deduplication is by `Message-ID`, so a resent email is counted as a duplicate instead of a new request; `legal.intake_doctor` additionally reports duplicate `Message-ID`s and repeated `Thread-Id`s. Note: two emails with the same `Thread-Id` but different `Message-ID`s are not deduplicated — QA only reports `E_LEGAL_THREAD_REPEATED`.
+Deduplication is by `Message-ID`, so a resent email is counted as a duplicate instead of a new request; `legal_intake_doctor` additionally reports duplicate `Message-ID`s and repeated `Thread-Id`s. Note: two emails with the same `Thread-Id` but different `Message-ID`s are not deduplicated — QA only reports `E_LEGAL_THREAD_REPEATED`.
 
 </details>
 
@@ -275,7 +275,7 @@ No. Parsing, deduplication and ledger export all happen on your machine; the sou
 - **No network, no model call.** The source contains no `fetch` / HTTP / DNS / WebSocket calls; the demo metadata in `package.json` declares `network: false`. Input and output stay local.
 - **Read-only input.** The tools receive EML text and a manifest JSON, read no other directory and never rewrite an original; attachments contribute only `name` / `sha256` / `size` metadata, never their contents.
 - **Bounded writes.** Writes land only under `$DSH_LEGAL_HOME` (default `$DSH_HOME/storages/dsh-legal-intake`) in `exports/` and in the `requests` table of the local `legal` storage domain.
-- **Duplicate protection.** When a `Message-ID` already exists in the `requests` table, `legal.intake` only counts it as a duplicate — no new row, no overwrite.
+- **Duplicate protection.** When a `Message-ID` already exists in the `requests` table, `legal_intake` only counts it as a duplicate — no new row, no overwrite.
 - **Loud failures.** Missing headers and export failures raise coded errors; QA and the conflict pre-check return stable codes instead of silently skipping.
 - **No hidden surface.** No mailbox / OA / cloud connection, and no command, client slot, `webServer` route or service key; the host mounts only the `tools` and `storageDomain` services, with no R2/R3 tools.
 
@@ -304,7 +304,7 @@ Writing tools are marked **R1 (local write)**, read-only tools **R0**; see "Tool
 
 ## Interoperability with other DSH plugins
 
-- **Namespaced tool names.** Every tool lives under `legal.*` and does not take a bare name used by built-in tools or another plugin.
+- **Namespaced tool names.** Every tool lives under `legal_*` and does not take a bare name used by built-in tools or another plugin.
 - **No host surface stealing.** It registers no command, client slot, `webServer` route or service key; it only injects the `tools` and `storageDomain` host services.
 - **Independent storage domain.** It uses only one domain, `legal` (version 1); teardown is a Cordis effect, so stopping or hot-reloading the plugin undoes it.
 - **Complementary responsibilities.** Clause review belongs to [`dsh-legal-clause`](https://github.com/PerryLink/dsh-legal-clause) and the full contract workflow to [`dsh-contract-suite`](https://github.com/PerryLink/dsh-contract-suite); clause stance and evidence lists belong to [`dsh-contract-stance`](https://github.com/PerryLink/dsh-contract-stance) and [`dsh-evidence-check`](https://github.com/PerryLink/dsh-evidence-check). Each is a separate package, installed only when needed.
@@ -342,7 +342,7 @@ Each checker is a separate package with its own rule pack and version; install o
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm build && pnpm lint && pnpm typecheck && pnpm test   # tsc build + node --test (6 files / 13 cases)
+pnpm build && pnpm lint && pnpm typecheck && pnpm test   # tsc build + node --test (7 files / 14 cases)
 pnpm gate:sku09                                          # acceptance gate (ACCEPTANCE.csv)
 node scripts/acceptance.mjs                              # re-run public/synthetic acceptance
 node samples/quickstart/run.mjs                          # synthetic sample summary
@@ -357,9 +357,9 @@ node samples/quickstart/run.mjs --check                  # compare field by fiel
 | `samples/quickstart/` | Shipped synthetic sample + gold file `expected/result.json` |
 | `fixtures/` | Repository-only public fixtures (the MIT NDA sample; not in the npm tarball) |
 | `scripts/` | Build / verification / acceptance scripts and the README asset generator |
-| `test/` | `node --test` (6 files / 13 cases) |
+| `test/` | `node --test` (7 files / 14 cases) |
 
-TypeScript sources live in `src/`, build output in `lib/`. Current repository version `0.1.0` (matches `package.json`); `node --test test/*.test.mjs` is green (6 files / 13 cases, 0 failures). The README pictures are generated programmatically by [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) — the hero banner with Pillow (four files, zh/en × light/dark), the structure diagram as hand-written SVG (flow-v5 light and dark) — and are safe to re-run; the older single-skin `dsh-legal-intake-flow-{light,dark}.svg` and the terminal captures stay in `docs/assets/` for existing links, while the READMEs reference only the new images.
+TypeScript sources live in `src/`, build output in `lib/`. Current repository version `0.2.0` (matches `package.json`); `node --test test/*.test.mjs` is green (7 files / 14 cases, 0 failures). The README pictures are generated programmatically by [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) — the hero banner with Pillow (four files, zh/en × light/dark), the structure diagram as hand-written SVG (flow-v5 light and dark) — and are safe to re-run; the older single-skin `dsh-legal-intake-flow-{light,dark}.svg` and the terminal captures stay in `docs/assets/` for existing links, while the READMEs reference only the new images.
 
 Topics: `deepseek-harness`, `dsh`, `dsh-plugin`, `legal`, `intake`, `contract`, `perrylink`, `eml`
 

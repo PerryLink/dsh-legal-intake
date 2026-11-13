@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0] — 2026-11-13
+
+### Breaking
+
+- **Tool names no longer contain a dot.** The four tools are now `legal_intake`, `legal_export_ledger`, `legal_intake_doctor` and `legal_conflict_check`. The previous spelling joined the `legal` namespace to each tool suffix with a dot; providers validate `tools[].name` against `^[a-zA-Z0-9_-]+$`, so a dotted name made the provider reject the whole `tools` array with `Invalid 'tools[N].name'`. The plugin still registered, but every request that carried its tools failed. Update prompts, saved calls and permission rules that still use the old dotted spelling. Minor rather than patch bump because tool names are covered by the 0.1.0 compatibility promise.
+- `test/tool-name-wire.test.mjs` pins the wire pattern: every registered tool name must match `^[a-zA-Z0-9_-]+$`, must not contain a dot, and must be unique.
+- Earlier changelog entries use the new spelling, so a repository-wide search no longer finds a dotted tool name.
+
+### Added
+
+- `legal_intake_doctor`: pre-intake QA for EML batches — header parse failures, duplicate Message-ID, repeated thread, duplicate/empty attachment names and zero-byte attachments, reported as stable codes instead of throwing. Read-only. Verified by `node --test test/*.test.mjs`.
+
 ## [0.1.0] — 2026-11-03
 
 ### Stable
@@ -17,13 +29,7 @@
 
 ### Added
 
-- `legal.conflict_check`: conflicts pre-check between a new matter and existing matters — normalised party names, opposing-side detection and same-party-on-both-sides issues. Read-only; not a substitute for a formal conflicts search. Verified by `node --test test/*.test.mjs` (11/11).
-
-## [Unreleased]
-
-### Added
-
-- `legal.intake_doctor`: pre-intake QA for EML batches — header parse failures, duplicate Message-ID, repeated thread, duplicate/empty attachment names and zero-byte attachments, reported as stable codes instead of throwing. Read-only. Verified by `node --test test/*.test.mjs` (7/7).
+- `legal_conflict_check`: conflicts pre-check between a new matter and existing matters — normalised party names, opposing-side detection and same-party-on-both-sides issues. Read-only; not a substitute for a formal conflicts search. Verified by `node --test test/*.test.mjs` (11/11).
 
 ## [0.1.0-alpha.6] — 2026-11-01
 

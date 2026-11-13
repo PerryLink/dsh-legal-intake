@@ -35,14 +35,14 @@ dsh plugin --profile <profile> add dsh-legal-intake
 
 ## 它是什么
 
-把收到的法务需求 EML 邮件按线程去重、判断需求类型，再导出一份 Excel 台账。插件只在本地工作：你（或会话）把 EML 文本与附件清单交给 `legal.intake`，它解析邮件头、按 `Message-ID` 去重、用关键词把需求归到 `NDA` / `MSA` / `CONTRACT_REVIEW` / `DISPUTE` / `COMPLIANCE` / `OTHER`，并把每条需求写进本地 `legal` 存储域；`legal.export_ledger` 再把这张表导出成 `$DSH_HOME/storages/dsh-legal-intake/exports/intake-ledger.xlsx`。不连邮箱、不联网、不调用模型，原始 EML 与附件清单不会被修改。
+把收到的法务需求 EML 邮件按线程去重、判断需求类型，再导出一份 Excel 台账。插件只在本地工作：你（或会话）把 EML 文本与附件清单交给 `legal_intake`，它解析邮件头、按 `Message-ID` 去重、用关键词把需求归到 `NDA` / `MSA` / `CONTRACT_REVIEW` / `DISPUTE` / `COMPLIANCE` / `OTHER`，并把每条需求写进本地 `legal` 存储域；`legal_export_ledger` 再把这张表导出成 `$DSH_HOME/storages/dsh-legal-intake/exports/intake-ledger.xlsx`。不连邮箱、不联网、不调用模型，原始 EML 与附件清单不会被修改。
 
 - **适合**：几十封客户或供应商发来的 EML 法务需求，需要按 Message-ID / 线程去重，再整理成一份能交给同事复核的台账。
 - **不适合**：需要自动连邮箱收信、或需要替你做法律意见与审批结论的场景；本包只在本地读取你给出的文件。
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/assets/dsh-legal-intake-flow-v5-dark.svg">
-  <img src="docs/assets/dsh-legal-intake-flow-v5-light.svg" width="100%" alt="dsh-legal-intake 结构图：一批 EML 先经 parseEml() 解析（Subject / From 必填，缺则抛 E_LEGAL_EML_INVALID；缺 Message-ID 用内容哈希兜底，缺 Thread-Id 回退为 Message-ID），随后分成两道闸——R0 只读侧是 legal.intake_doctor（3 封报出 4 个错误码）与 legal.conflict_check（当事人名归一，同名异侧记 conflicts，同侧双角色报 E_LEGAL_PARTY_BOTH_SIDES）；R1 写入侧按 Message-ID 去重（3 封 → 2 条新需求 / 1 条重复）、按 NDA → MSA → CONTRACT_REVIEW → DISPUTE → COMPLIANCE → OTHER 顺序分类、写入 legal 域 requests 表并导出 intake-ledger.xlsx（工作表 Requests，2 行）">
+  <img src="docs/assets/dsh-legal-intake-flow-v5-light.svg" width="100%" alt="dsh-legal-intake 结构图：一批 EML 先经 parseEml() 解析（Subject / From 必填，缺则抛 E_LEGAL_EML_INVALID；缺 Message-ID 用内容哈希兜底，缺 Thread-Id 回退为 Message-ID），随后分成两道闸——R0 只读侧是 legal_intake_doctor（3 封报出 4 个错误码）与 legal_conflict_check（当事人名归一，同名异侧记 conflicts，同侧双角色报 E_LEGAL_PARTY_BOTH_SIDES）；R1 写入侧按 Message-ID 去重（3 封 → 2 条新需求 / 1 条重复）、按 NDA → MSA → CONTRACT_REVIEW → DISPUTE → COMPLIANCE → OTHER 顺序分类、写入 legal 域 requests 表并导出 intake-ledger.xlsx（工作表 Requests，2 行）">
 </picture>
 
 ## 三步上手
@@ -75,7 +75,7 @@ dsh plugin --profile <profile> add dsh-legal-intake
    node samples/quickstart/run.mjs
    ```
 
-   quickstart 读取随包的 3 封合成 EML 与 1 份附件清单，依次调用 `legal.intake_doctor → legal.intake → legal.export_ledger`。在会话里也可以直接说（`package.json` 的 `dsh.demo.prompt`）：
+   quickstart 读取随包的 3 封合成 EML 与 1 份附件清单，依次调用 `legal_intake_doctor → legal_intake → legal_export_ledger`。在会话里也可以直接说（`package.json` 的 `dsh.demo.prompt`）：
 
    > 我有一封客户发来的法务需求邮件和附件清单，帮我按线程去重、判断需求类型，再导出一份台账。
 
@@ -104,11 +104,11 @@ ledger intake-ledger.xlsx: 2 rows
 
 ## 核心能力
 
-- **本地 EML 入库** —— `legal.intake` 接收一批 EML 文本与附件元数据，解析 `Subject` / `From` / `Date` / `Message-ID` / `Thread-Id`，按 `Message-ID` 去重，把新需求写进本地 `legal` 存储域的 `requests` 表；重复邮件只计入「重复」，不产生新行。
+- **本地 EML 入库** —— `legal_intake` 接收一批 EML 文本与附件元数据，解析 `Subject` / `From` / `Date` / `Message-ID` / `Thread-Id`，按 `Message-ID` 去重，把新需求写进本地 `legal` 存储域的 `requests` 表；重复邮件只计入「重复」，不产生新行。
 - **需求类型分类** —— 按主题与正文的关键词归到 `NDA` / `MSA` / `CONTRACT_REVIEW` / `DISPUTE` / `COMPLIANCE` / `OTHER`；先命中先归类，未命中归 `OTHER`。
-- **入库前体检** —— `legal.intake_doctor` 只读检查一批邮件：邮件头缺失、重复 `Message-ID`、重复 `Thread-Id`、同名附件、空文件名、0 字节附件，用稳定错误码报告，不抛异常、不落库。
-- **当事人冲突预检** —— `legal.conflict_check` 归一化当事人名称，检查新事项与既有事项之间是否出现「同一当事人站在对立面」，并提示新事项里同一人同时是委托方与对方；只读，不能替代正式的冲突检索。
-- **台账导出** —— `legal.export_ledger` 把 `requests` 表导出为 `intake-ledger.xlsx`（工作表 `Requests`），返回路径、行数与文件 SHA-256。
+- **入库前体检** —— `legal_intake_doctor` 只读检查一批邮件：邮件头缺失、重复 `Message-ID`、重复 `Thread-Id`、同名附件、空文件名、0 字节附件，用稳定错误码报告，不抛异常、不落库。
+- **当事人冲突预检** —— `legal_conflict_check` 归一化当事人名称，检查新事项与既有事项之间是否出现「同一当事人站在对立面」，并提示新事项里同一人同时是委托方与对方；只读，不能替代正式的冲突检索。
+- **台账导出** —— `legal_export_ledger` 把 `requests` 表导出为 `intake-ledger.xlsx`（工作表 `Requests`），返回路径、行数与文件 SHA-256。
 - **纯本地** —— 源码中没有 `fetch` / HTTP / DNS / WebSocket 调用；不连邮箱、OA、云服务，不上传数据。
 - **失败可读** —— 错误统一为 `<一句人话>（E_LEGAL_…）｜下一步：<动作>`，按提示就能处理。
 
@@ -118,10 +118,10 @@ ledger intake-ledger.xlsx: 2 rows
 
 | 工具 | 用途 | 风险 |
 |---|---|---|
-| `legal.intake` | 解析 EML、分类需求、按 Message-ID 去重并写入 `requests`；返回新需求 id 与重复 id | R1 本地写 |
-| `legal.export_ledger` | 把 `requests` 导出为 `Requests` 工作表，返回路径、行数与 SHA-256 | R1 本地写 |
-| `legal.intake_doctor` | 入库前体检：缺头、重复 Message-ID / 线程、同名 / 空名 / 0 字节附件 | R0 只读 |
-| `legal.conflict_check` | 新事项与既有事项的当事人冲突预检：归一化名称、对立面、双面当事人 | R0 只读 |
+| `legal_intake` | 解析 EML、分类需求、按 Message-ID 去重并写入 `requests`；返回新需求 id 与重复 id | R1 本地写 |
+| `legal_export_ledger` | 把 `requests` 导出为 `Requests` 工作表，返回路径、行数与 SHA-256 | R1 本地写 |
+| `legal_intake_doctor` | 入库前体检：缺头、重复 Message-ID / 线程、同名 / 空名 / 0 字节附件 | R0 只读 |
+| `legal_conflict_check` | 新事项与既有事项的当事人冲突预检：归一化名称、对立面、双面当事人 | R0 只读 |
 
 ### 输入与输出
 
@@ -207,10 +207,10 @@ PS1-QS01,quickstart 样例与金标一致,1/1,1,true,synthetic/quickstart,true
 
 | 参数 | 默认值 | 作用于 | 含义 |
 |---|---|---|---|
-| `messages[].eml_text` | 必填 | `legal.intake` / `legal.intake_doctor` | UTF-8 EML 全文；需含 `Subject` 与 `From` |
-| `messages[].attachments[]` | `[]` | `legal.intake` / `legal.intake_doctor` | 附件元数据 `name` / `sha256` / `size`；不读取附件内容 |
-| `new_parties[]` | 必填 | `legal.conflict_check` | 新事项当事人：`name` + `role`（`client` / `adverse`） |
-| `existing[]` | 必填 | `legal.conflict_check` | 既有事项：`matter_id` + `parties[]`（同样含 `name` / `role`） |
+| `messages[].eml_text` | 必填 | `legal_intake` / `legal_intake_doctor` | UTF-8 EML 全文；需含 `Subject` 与 `From` |
+| `messages[].attachments[]` | `[]` | `legal_intake` / `legal_intake_doctor` | 附件元数据 `name` / `sha256` / `size`；不读取附件内容 |
+| `new_parties[]` | 必填 | `legal_conflict_check` | 新事项当事人：`name` + `role`（`client` / `adverse`） |
+| `existing[]` | 必填 | `legal_conflict_check` | 既有事项：`matter_id` + `parties[]`（同样含 `name` / `role`） |
 
 <details>
 <summary>错误码与故障排查</summary>
@@ -220,7 +220,7 @@ PS1-QS01,quickstart 样例与金标一致,1/1,1,true,synthetic/quickstart,true
 | 错误码 | 何时出现 | 下一步 |
 |---|---|---|
 | `E_LEGAL_EML_INVALID` | 邮件缺 `Subject` 或 `From`（抛错） | 补上两个邮件头，或先用自带样例 |
-| `E_LEGAL_LEDGER_FAILED` | 台账写不出来（`legal.export_ledger` 抛错） | 确认导出目录可写，再重跑一次导出 |
+| `E_LEGAL_LEDGER_FAILED` | 台账写不出来（`legal_export_ledger` 抛错） | 确认导出目录可写，再重跑一次导出 |
 | `E_LEGAL_MESSAGE_DUPLICATE` | 体检发现重复 `Message-ID`（会被当成重发） | 确认是否重发；新需求请让发件人换一封新邮件 |
 | `E_LEGAL_THREAD_REPEATED` | 体检发现两封不同邮件用了同一个 `Thread-Id` | 检查线程号，不同串邮件请改成各自线程号 |
 | `E_LEGAL_ATTACHMENT_NAME_EMPTY` | 附件清单里有条目没有文件名 | 补上文件名，或删掉该条 |
@@ -244,7 +244,7 @@ PS1-QS01,quickstart 样例与金标一致,1/1,1,true,synthetic/quickstart,true
 <details>
 <summary>同一封邮件为什么只入库一次？</summary>
 
-去重按 `Message-ID` 做，同一封重发邮件会被计入「重复」而不是新需求；`legal.intake_doctor` 还会同时提示重复的 `Message-ID` 和重复的 `Thread-Id`。注意：`Thread-Id` 相同但 `Message-ID` 不同的两封邮件不会被去重，只会在体检里报 `E_LEGAL_THREAD_REPEATED`。
+去重按 `Message-ID` 做，同一封重发邮件会被计入「重复」而不是新需求；`legal_intake_doctor` 还会同时提示重复的 `Message-ID` 和重复的 `Thread-Id`。注意：`Thread-Id` 相同但 `Message-ID` 不同的两封邮件不会被去重，只会在体检里报 `E_LEGAL_THREAD_REPEATED`。
 
 </details>
 
@@ -274,7 +274,7 @@ PS1-QS01,quickstart 样例与金标一致,1/1,1,true,synthetic/quickstart,true
 - **不联网、不调模型。** 源码中没有 `fetch` / HTTP / DNS / WebSocket 调用；`package.json` 的演示元数据声明 `network: false`。输入和输出都留在本地。
 - **输入只读。** 工具接收的是 EML 文本与附件清单 JSON，不读其他目录、不改写原文件；附件只使用 `name` / `sha256` / `size` 元数据，不读取附件内容。
 - **写入范围受限。** 写操作只落在 `$DSH_LEGAL_HOME`（缺省 `$DSH_HOME/storages/dsh-legal-intake`）下的 `exports/` 与本地 `legal` 存储域的 `requests` 表。
-- **去重保护。** `Message-ID` 已存在于 `requests` 表时，`legal.intake` 只把它计入重复列表，不产生新行、不覆盖既有记录。
+- **去重保护。** `Message-ID` 已存在于 `requests` 表时，`legal_intake` 只把它计入重复列表，不产生新行、不覆盖既有记录。
 - **失败响亮。** 邮件缺头、导出失败都会抛带错误码的异常；体检与冲突预检把问题作为稳定错误码返回，不静默跳过。
 - **无隐藏面。** 不去连邮箱 / OA / 云服务，不注册命令、客户端 slot、`webServer` 路由或服务键；宿主只挂 `tools` 与 `storageDomain` 两个服务，没有 R2/R3 工具。
 
@@ -303,7 +303,7 @@ PS1-QS01,quickstart 样例与金标一致,1/1,1,true,synthetic/quickstart,true
 
 ## 与其他 DSH 插件的互操作性
 
-- **工具名带命名空间。** 所有工具都在 `legal.*` 下，不占用内置工具或其他插件的裸名。
+- **工具名带命名空间。** 所有工具都在 `legal_*` 下，不占用内置工具或其他插件的裸名。
 - **不抢宿主表面。** 不注册命令、客户端 slot、`webServer` 路由或服务键；只注入 `tools` 与 `storageDomain` 两个宿主服务。
 - **存储域独立。** 只使用 `legal`（version 1）这一个域；关闭走 Cordis effect，停止 / 热重载即可撤销。
 - **职责互补。** 条款审阅交给 [`dsh-legal-clause`](https://github.com/PerryLink/dsh-legal-clause)，合同全流程交给 [`dsh-contract-suite`](https://github.com/PerryLink/dsh-contract-suite)；条款立场与证据清单分别交给 [`dsh-contract-stance`](https://github.com/PerryLink/dsh-contract-stance) 与 [`dsh-evidence-check`](https://github.com/PerryLink/dsh-evidence-check)。它们各自是独立包，按需安装。
@@ -341,7 +341,7 @@ PS1-QS01,quickstart 样例与金标一致,1/1,1,true,synthetic/quickstart,true
 
 ```sh
 pnpm install --frozen-lockfile
-pnpm build && pnpm lint && pnpm typecheck && pnpm test   # tsc 构建 + node --test（6 个文件 / 13 个用例）
+pnpm build && pnpm lint && pnpm typecheck && pnpm test   # tsc 构建 + node --test（7 个文件 / 14 个用例）
 pnpm gate:sku09                                          # 验收门禁（ACCEPTANCE.csv）
 node scripts/acceptance.mjs                              # 重跑公开 / 合成验收
 node samples/quickstart/run.mjs                          # 合成样例摘要
@@ -356,9 +356,9 @@ node samples/quickstart/run.mjs --check                  # 与金标逐字段比
 | `samples/quickstart/` | 随包合成样例 + 金标 `expected/result.json` |
 | `fixtures/` | 仅仓库保留的公开 fixture（MIT NDA 样本，不在 npm tarball 里） |
 | `scripts/` | 构建 / 校验 / 验收脚本与 README 配图生成器 |
-| `test/` | `node --test`（6 个文件 / 13 个用例） |
+| `test/` | `node --test`（7 个文件 / 14 个用例） |
 
-TypeScript 源码在 `src/`，构建产物在 `lib/`。当前仓库版本 `0.1.0`（与 `package.json` 一致）；`node --test test/*.test.mjs` 全绿（6 个文件 / 13 个用例，0 失败）。README 配图由 [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) 程序化生成——hero 横幅用 Pillow 画（`zh`/`en` × 深浅四版），结构图用手写 SVG 画（flow-v5 深浅双版）——可重复执行；旧的单版 `dsh-legal-intake-flow-{light,dark}.svg` 与终端截图保留在 `docs/assets/` 供外链使用，README 只引用新图。
+TypeScript 源码在 `src/`，构建产物在 `lib/`。当前仓库版本 `0.2.0`（与 `package.json` 一致）；`node --test test/*.test.mjs` 全绿（7 个文件 / 14 个用例，0 失败）。README 配图由 [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) 程序化生成——hero 横幅用 Pillow 画（`zh`/`en` × 深浅四版），结构图用手写 SVG 画（flow-v5 深浅双版）——可重复执行；旧的单版 `dsh-legal-intake-flow-{light,dark}.svg` 与终端截图保留在 `docs/assets/` 供外链使用，README 只引用新图。
 
 Topics：`deepseek-harness`, `dsh`, `dsh-plugin`, `legal`, `intake`, `contract`, `perrylink`, `eml`
 

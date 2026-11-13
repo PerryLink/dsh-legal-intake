@@ -23,7 +23,7 @@ const INTAKE_HUMAN: Record<IntakeErrorCode | IntakeIssueCode, { text: string; ne
   },
   E_LEGAL_LEDGER_FAILED: {
     text: '台账没有写出来，刚才的入库结果还在内存里',
-    next: '确认导出目录可写，然后重新跑一次 legal.export_ledger',
+    next: '确认导出目录可写，然后重新跑一次 legal_export_ledger',
   },
   E_LEGAL_MESSAGE_DUPLICATE: {
     text: '这封邮件的 Message-ID 和前面某一封完全相同，会被当成重发',
