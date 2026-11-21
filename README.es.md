@@ -157,6 +157,11 @@ node samples/quickstart/run.mjs
 
 *EML sintéticos → archivo de referencia `samples/quickstart/expected/result.json`; el comando y los hashes están en `screenshots.json`.*
 
+![Salida real del quickstart de dsh-legal-intake](docs/assets/dsh-legal-intake-demo.gif)
+
+*Repetición animada de una ejecución real registrada en este repositorio.*
+
+
 `--check` recalcula y compara campo por campo con el archivo de referencia, y termina con `quickstart ok`: 3 EML sintéticos producen 2 solicitudes nuevas, 1 duplicado, 4 problemas de control previo y 2 filas de registro.
 
 *Observed from `samples/quickstart/expected/result.json` (= la salida de `node samples/quickstart/run.mjs --json`); las aserciones están en `test/quickstart.test.mjs`.*

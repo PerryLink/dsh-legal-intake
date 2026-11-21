@@ -157,6 +157,11 @@ node samples/quickstart/run.mjs
 
 *सिंथेटिक EML → गोल्ड फ़ाइल `samples/quickstart/expected/result.json`; कमांड और हैश `screenshots.json` में दर्ज हैं।*
 
+![dsh-legal-intake quickstart का वास्तविक आउटपुट](docs/assets/dsh-legal-intake-demo.gif)
+
+*इस रिपॉज़िटरी में दर्ज असली रन का एनिमेटेड रीप्ले।*
+
+
 `--check` दोबारा गणना करके हर फ़ील्ड की गोल्ड फ़ाइल से तुलना करता है और `quickstart ok` पर खत्म होता है: 3 सिंथेटिक EML से 2 नए अनुरोध, 1 डुप्लिकेट, 4 जाँच समस्याएँ और 2 लेजर पंक्तियाँ बनती हैं।
 
 *Observed from `samples/quickstart/expected/result.json` (= `node samples/quickstart/run.mjs --json` का stdout); दावे `test/quickstart.test.mjs` में हैं।*

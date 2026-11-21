@@ -157,6 +157,11 @@ node samples/quickstart/run.mjs
 
 *Synthetic EML → gold file `samples/quickstart/expected/result.json`; the command and hashes are recorded in `screenshots.json`.*
 
+![Real dsh-legal-intake quickstart run output](docs/assets/dsh-legal-intake-demo.gif)
+
+*Animated replay of a real run recorded in this repository.*
+
+
 `--check` recomputes the run and compares every field against the gold file, ending with `quickstart ok`: 3 synthetic EMLs produce 2 new requests, 1 duplicate, 4 QA issues and 2 ledger rows.
 
 *Observed from `samples/quickstart/expected/result.json` (= the stdout of `node samples/quickstart/run.mjs --json`); assertions live in `test/quickstart.test.mjs`.*

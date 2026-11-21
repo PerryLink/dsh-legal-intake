@@ -157,6 +157,11 @@ node samples/quickstart/run.mjs
 
 *合成 EML → 金标 `samples/quickstart/expected/result.json`；命令与哈希见 `screenshots.json`。*
 
+![dsh-legal-intake quickstart 真实运行输出](docs/assets/dsh-legal-intake-demo.gif)
+
+*本仓库一次真实运行的动图回放。*
+
+
 `--check` 会重新计算并与金标逐字段比对，结尾输出 `quickstart ok`：3 封合成 EML 产生 2 条新需求、1 条去重、4 条体检问题、2 行台账。
 
 *Observed from `samples/quickstart/expected/result.json`（= `node samples/quickstart/run.mjs --json` 的 stdout）；断言见 `test/quickstart.test.mjs`。*
