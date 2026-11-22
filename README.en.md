@@ -11,6 +11,8 @@
 
 A local legal-request intake plugin for DeepSeek Harness: parse EML, classify the request type, deduplicate by Message-ID / thread, and export an Excel ledger. Originals are read-only and every result stays on your machine.
 
+Last verified on DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [Install](#three-step-setup) · [Configuration](#configuration) · [FAQ](#faq) · [简体中文](README.md) · [English](README.en.md) · [Español](README.es.md) · [Português](README.pt.md) · [हिन्दी](README.hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-3366CC?style=flat-square&labelColor=2B3245)](LICENSE)
@@ -160,7 +162,6 @@ node samples/quickstart/run.mjs
 ![Real dsh-legal-intake quickstart run output](docs/assets/dsh-legal-intake-demo.gif)
 
 *Animated replay of a real run recorded in this repository.*
-
 
 `--check` recomputes the run and compares every field against the gold file, ending with `quickstart ok`: 3 synthetic EMLs produce 2 new requests, 1 duplicate, 4 QA issues and 2 ledger rows.
 
@@ -364,7 +365,7 @@ node samples/quickstart/run.mjs --check                  # compare field by fiel
 | `scripts/` | Build / verification / acceptance scripts and the README asset generator |
 | `test/` | `node --test` (7 files / 14 cases) |
 
-TypeScript sources live in `src/`, build output in `lib/`. Current repository version `0.2.0` (matches `package.json`); `node --test test/*.test.mjs` is green (7 files / 14 cases, 0 failures). The README pictures are generated programmatically by [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) — the hero banner with Pillow (four files, zh/en × light/dark), the structure diagram as hand-written SVG (flow-v5 light and dark) — and are safe to re-run; the older single-skin `dsh-legal-intake-flow-{light,dark}.svg` and the terminal captures stay in `docs/assets/` for existing links, while the READMEs reference only the new images.
+TypeScript sources live in `src/`, build output in `lib/`. Current repository version `0.2.1` (matches `package.json`); `node --test test/*.test.mjs` is green (7 files / 14 cases, 0 failures). The README pictures are generated programmatically by [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) — the hero banner with Pillow (four files, zh/en × light/dark), the structure diagram as hand-written SVG (flow-v5 light and dark) — and are safe to re-run; the older single-skin `dsh-legal-intake-flow-{light,dark}.svg` and the terminal captures stay in `docs/assets/` for existing links, while the READMEs reference only the new images.
 
 Topics: `deepseek-harness`, `dsh`, `dsh-plugin`, `legal`, `intake`, `contract`, `perrylink`, `eml`
 

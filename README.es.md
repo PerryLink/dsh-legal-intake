@@ -11,6 +11,8 @@
 
 Un plugin local de recepción de solicitudes legales para DeepSeek Harness: parsea EML, clasifica el tipo de solicitud, deduplica por Message-ID / hilo y exporta un registro Excel. Los originales son de solo lectura y todo el resultado se queda en tu máquina.
 
+Última verificación: DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [Instalar](#instalación-en-tres-pasos) · [Configuración](#configuración) · [FAQ](#faq) · [简体中文](README.md) · [English](README.en.md) · [Español](README.es.md) · [Português](README.pt.md) · [हिन्दी](README.hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-3366CC?style=flat-square&labelColor=2B3245)](LICENSE)
@@ -160,7 +162,6 @@ node samples/quickstart/run.mjs
 ![Salida real del quickstart de dsh-legal-intake](docs/assets/dsh-legal-intake-demo.gif)
 
 *Repetición animada de una ejecución real registrada en este repositorio.*
-
 
 `--check` recalcula y compara campo por campo con el archivo de referencia, y termina con `quickstart ok`: 3 EML sintéticos producen 2 solicitudes nuevas, 1 duplicado, 4 problemas de control previo y 2 filas de registro.
 
@@ -364,7 +365,7 @@ node samples/quickstart/run.mjs --check                  # comparar campo por ca
 | `scripts/` | Scripts de build / verificación / aceptación y el generador de imágenes del README |
 | `test/` | `node --test` (7 archivos / 14 casos) |
 
-El código TypeScript está en `src/` y la salida de build en `lib/`. Versión actual del repositorio `0.2.0` (coincide con `package.json`); `node --test test/*.test.mjs` pasa en verde (7 archivos / 14 casos, 0 fallos). Las imágenes del README se generan programáticamente con [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) —el banner hero con Pillow (cuatro archivos, zh/en × claro/oscuro) y el diagrama de estructura como SVG escrito a mano (flow-v5 claro y oscuro)— y se pueden volver a ejecutar; el antiguo `dsh-legal-intake-flow-{light,dark}.svg` de una sola versión y las capturas de terminal se conservan en `docs/assets/` para los enlaces existentes, mientras que los README solo referencian las imágenes nuevas.
+El código TypeScript está en `src/` y la salida de build en `lib/`. Versión actual del repositorio `0.2.1` (coincide con `package.json`); `node --test test/*.test.mjs` pasa en verde (7 archivos / 14 casos, 0 fallos). Las imágenes del README se generan programáticamente con [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) —el banner hero con Pillow (cuatro archivos, zh/en × claro/oscuro) y el diagrama de estructura como SVG escrito a mano (flow-v5 claro y oscuro)— y se pueden volver a ejecutar; el antiguo `dsh-legal-intake-flow-{light,dark}.svg` de una sola versión y las capturas de terminal se conservan en `docs/assets/` para los enlaces existentes, mientras que los README solo referencian las imágenes nuevas.
 
 Topics: `deepseek-harness`, `dsh`, `dsh-plugin`, `legal`, `intake`, `contract`, `perrylink`, `eml`
 

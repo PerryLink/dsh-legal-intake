@@ -11,6 +11,8 @@
 
 面向 DeepSeek Harness 的本地法务需求收件插件：解析 EML、判断需求类型、按 Message-ID / 线程去重，再导出一份 Excel 台账；原文件只读，所有结果留在本机。
 
+最近一次核验：DeepSeek Harness `dsh-v0.2.3-alpha.1`（2026-11-22）。
+
 [安装](#三步上手) · [配置](#配置) · [FAQ](#faq) · [简体中文](README.md) · [English](README.en.md) · [Español](README.es.md) · [Português](README.pt.md) · [हिन्दी](README.hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-3366CC?style=flat-square&labelColor=2B3245)](LICENSE)
@@ -160,7 +162,6 @@ node samples/quickstart/run.mjs
 ![dsh-legal-intake quickstart 真实运行输出](docs/assets/dsh-legal-intake-demo.gif)
 
 *本仓库一次真实运行的动图回放。*
-
 
 `--check` 会重新计算并与金标逐字段比对，结尾输出 `quickstart ok`：3 封合成 EML 产生 2 条新需求、1 条去重、4 条体检问题、2 行台账。
 
@@ -363,7 +364,7 @@ node samples/quickstart/run.mjs --check                  # 与金标逐字段比
 | `scripts/` | 构建 / 校验 / 验收脚本与 README 配图生成器 |
 | `test/` | `node --test`（7 个文件 / 14 个用例） |
 
-TypeScript 源码在 `src/`，构建产物在 `lib/`。当前仓库版本 `0.2.0`（与 `package.json` 一致）；`node --test test/*.test.mjs` 全绿（7 个文件 / 14 个用例，0 失败）。README 配图由 [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) 程序化生成——hero 横幅用 Pillow 画（`zh`/`en` × 深浅四版），结构图用手写 SVG 画（flow-v5 深浅双版）——可重复执行；旧的单版 `dsh-legal-intake-flow-{light,dark}.svg` 与终端截图保留在 `docs/assets/` 供外链使用，README 只引用新图。
+TypeScript 源码在 `src/`，构建产物在 `lib/`。当前仓库版本 `0.2.1`（与 `package.json` 一致）；`node --test test/*.test.mjs` 全绿（7 个文件 / 14 个用例，0 失败）。README 配图由 [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) 程序化生成——hero 横幅用 Pillow 画（`zh`/`en` × 深浅四版），结构图用手写 SVG 画（flow-v5 深浅双版）——可重复执行；旧的单版 `dsh-legal-intake-flow-{light,dark}.svg` 与终端截图保留在 `docs/assets/` 供外链使用，README 只引用新图。
 
 Topics：`deepseek-harness`, `dsh`, `dsh-plugin`, `legal`, `intake`, `contract`, `perrylink`, `eml`
 

@@ -870,7 +870,7 @@ def flow_svg(skin: str) -> str:
     parts.append(t(44, 630, tools_line, 11, s["faint"], "mono"))
     parts.append(t(1056, 630, "request_id = req_ + sha256(Message-ID)[:12]",
                    11, s["faint"], "mono", 400, "end"))
-    parts.append(t(44, 650, "0.2.0 · Apache-2.0 · synthetic sample only",
+    parts.append(t(44, 650, "0.2.1 · Apache-2.0 · synthetic sample only",
                    11, s["faint"], "sans"))
     parts.append(t(1056, 650,
                    "samples/quickstart/expected/result.json · 3 EML → "

@@ -11,6 +11,8 @@
 
 DeepSeek Harness के लिए स्थानीय कानूनी अनुरोध इनटेक प्लगइन: EML पार्स करें, अनुरोध का प्रकार तय करें, Message-ID / थ्रेड से डुप्लिकेट हटाएँ और Excel लेजर निर्यात करें। मूल फ़ाइलें केवल पढ़ने योग्य हैं और हर परिणाम आपकी मशीन पर ही रहता है।
 
+अंतिम सत्यापन: DeepSeek Harness `dsh-v0.2.3-alpha.1` (2026-11-22).
+
 [इंस्टॉल](#तीन-चरणों-में-शुरुआत) · [कॉन्फ़िगरेशन](#कॉन्फ़िगरेशन) · [FAQ](#faq) · [简体中文](README.md) · [English](README.en.md) · [Español](README.es.md) · [Português](README.pt.md) · [हिन्दी](README.hi.md)
 
 [![License](https://img.shields.io/badge/license-Apache--2.0-3366CC?style=flat-square&labelColor=2B3245)](LICENSE)
@@ -160,7 +162,6 @@ node samples/quickstart/run.mjs
 ![dsh-legal-intake quickstart का वास्तविक आउटपुट](docs/assets/dsh-legal-intake-demo.gif)
 
 *इस रिपॉज़िटरी में दर्ज असली रन का एनिमेटेड रीप्ले।*
-
 
 `--check` दोबारा गणना करके हर फ़ील्ड की गोल्ड फ़ाइल से तुलना करता है और `quickstart ok` पर खत्म होता है: 3 सिंथेटिक EML से 2 नए अनुरोध, 1 डुप्लिकेट, 4 जाँच समस्याएँ और 2 लेजर पंक्तियाँ बनती हैं।
 
@@ -364,7 +365,7 @@ node samples/quickstart/run.mjs --check                  # गोल्ड फ�
 | `scripts/` | बिल्ड / सत्यापन / स्वीकृति स्क्रिप्ट और README एसेट जनरेटर |
 | `test/` | `node --test` (7 फ़ाइलें / 14 केस) |
 
-TypeScript सोर्स `src/` में और बिल्ड आउटपुट `lib/` में है। मौजूदा रेपो वर्ज़न `0.2.0` (`package.json` से मेल खाता है); `node --test test/*.test.mjs` हरा है (7 फ़ाइलें / 14 केस, 0 विफलता)। README की तस्वीरें [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) से प्रोग्रामेटिक रूप से बनती हैं — hero बैनर Pillow से (चार फ़ाइलें, zh/en × हल्का/गहरा) और संरचना-चित्र हाथ से लिखे SVG से (flow-v5 हल्का और गहरा) — और दोबारा चलाना सुरक्षित है; पुराना एक-संस्करण `dsh-legal-intake-flow-{light,dark}.svg` और टर्मिनल कैप्चर मौजूदा लिंक के लिए `docs/assets/` में रखे गए हैं, जबकि README केवल नई तस्वीरों का संदर्भ देते हैं।
+TypeScript सोर्स `src/` में और बिल्ड आउटपुट `lib/` में है। मौजूदा रेपो वर्ज़न `0.2.1` (`package.json` से मेल खाता है); `node --test test/*.test.mjs` हरा है (7 फ़ाइलें / 14 केस, 0 विफलता)। README की तस्वीरें [`scripts/gen-readme-assets.py`](scripts/gen-readme-assets.py) से प्रोग्रामेटिक रूप से बनती हैं — hero बैनर Pillow से (चार फ़ाइलें, zh/en × हल्का/गहरा) और संरचना-चित्र हाथ से लिखे SVG से (flow-v5 हल्का और गहरा) — और दोबारा चलाना सुरक्षित है; पुराना एक-संस्करण `dsh-legal-intake-flow-{light,dark}.svg` और टर्मिनल कैप्चर मौजूदा लिंक के लिए `docs/assets/` में रखे गए हैं, जबकि README केवल नई तस्वीरों का संदर्भ देते हैं।
 
 Topics: `deepseek-harness`, `dsh`, `dsh-plugin`, `legal`, `intake`, `contract`, `perrylink`, `eml`
 
