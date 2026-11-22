@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Legal request intake",
+    "description": "Turn a pile of legal-request emails into a reviewable local ledger — deduplicated by thread, with no network and no model call."
+  }
+}

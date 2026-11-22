@@ -7,6 +7,8 @@
 
 # dsh-legal-intake
 
+Current version `0.2.2`.
+
 **Turn a pile of legal-request emails into a reviewable local ledger — deduplicated by thread, with no network and no model call.**
 
 A local legal-request intake plugin for DeepSeek Harness: parse EML, classify the request type, deduplicate by Message-ID / thread, and export an Excel ledger. Originals are read-only and every result stays on your machine.

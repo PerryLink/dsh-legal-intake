@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "法务需求收件",
+    "description": "面向 DeepSeek Harness 的本地法务需求收件插件：解析 EML、判断需求类型、按 Message-ID / 线程去重，再导出一份 Excel 台账；原文件只读，所有结果留在本机。"
+  }
+}
